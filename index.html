@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Forever Wrapped</title>
+  <link href="https://fonts.googleapis.com/css2?family=Circular+Std:wght@400;700&family=Montserrat:wght@300;400;600;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green: #1DB954;
+      --green-dim: #158a3e;
+      --black: #0a0a0a;
+      --surface: #111111;
+      --surface2: #1a1a1a;
+      --surface3: #222222;
+      --border: rgba(255,255,255,0.07);
+      --text: #ffffff;
+      --text-muted: #a0a0a0;
+      --text-dim: #555555;
+      --accent1: #FF6B6B;
+      --accent2: #FFD93D;
+      --accent3: #6BCB77;
+      --accent4: #4D96FF;
+      --radius: 16px;
+      --font-display: 'Montserrat', sans-serif;
+      --font-mono: 'Space Mono', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--text);
+      font-family: var(--font-display);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9999; opacity: 0.4;
+    }
+
+    /* ── BACKGROUND ORBS ── */
+    .bg-orbs {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      overflow: hidden;
+    }
+    .orb {
+      position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.12;
+      animation: drift 20s ease-in-out infinite;
+    }
+    .orb1 { width: 600px; height: 600px; background: var(--green); top: -200px; left: -100px; animation-delay: 0s; }
+    .orb2 { width: 500px; height: 500px; background: var(--accent4); bottom: -200px; right: -100px; animation-delay: -7s; }
+    .orb3 { width: 300px; height: 300px; background: var(--accent1); top: 40%; left: 50%; animation-delay: -14s; }
+
+    @keyframes drift {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(40px, -30px) scale(1.05); }
+      66% { transform: translate(-20px, 40px) scale(0.95); }
+    }
+
+    /* ── APP CONTAINER ── */
+    #app { position: relative; z-index: 1; }
+
+    /* ── LOGIN SCREEN ── */
+    .login-screen {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 40px 20px;
+      text-align: center;
+      animation: fadeIn 0.8s ease both;
+    }
+
+    .logo-mark {
+      width: 80px; height: 80px;
+      background: var(--green);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 32px;
+      box-shadow: 0 0 60px rgba(29,185,84,0.4);
+      animation: pulseGlow 3s ease-in-out infinite;
+    }
+    .logo-mark svg { width: 44px; height: 44px; fill: var(--black); }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 60px rgba(29,185,84,0.4); }
+      50% { box-shadow: 0 0 100px rgba(29,185,84,0.7); }
+    }
+
+    .login-title {
+      font-size: clamp(42px, 8vw, 80px);
+      font-weight: 900;
+      letter-spacing: -3px;
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+    .login-title span { color: var(--green); }
+
+    .login-subtitle {
+      font-size: 16px;
+      color: var(--text-muted);
+      font-weight: 300;
+      letter-spacing: 0.5px;
+      margin-bottom: 48px;
+      max-width: 420px;
+    }
+
+    .btn-login {
+      display: inline-flex; align-items: center; gap: 12px;
+      background: var(--green);
+      color: var(--black);
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 18px 40px;
+      border-radius: 100px;
+      border: none; cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 8px 40px rgba(29,185,84,0.35);
+    }
+    .btn-login:hover {
+      transform: scale(1.04) translateY(-2px);
+      box-shadow: 0 12px 50px rgba(29,185,84,0.5);
+      background: #1ed760;
+    }
+    .btn-login:active { transform: scale(0.98); }
+
+    .login-features {
+      display: flex; gap: 32px; margin-top: 60px; flex-wrap: wrap; justify-content: center;
+    }
+    .feature-pill {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--surface2); border: 1px solid var(--border);
+      padding: 10px 18px; border-radius: 100px;
+      font-size: 13px; color: var(--text-muted);
+    }
+    .feature-pill .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+
+    /* ── DASHBOARD ── */
+    .dashboard {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+      animation: fadeIn 0.6s ease both;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ── HEADER ── */
+    .dash-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 48px; flex-wrap: wrap; gap: 16px;
+    }
+    .dash-brand { display: flex; align-items: center; gap: 12px; }
+    .dash-brand-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--green); box-shadow: 0 0 16px var(--green); }
+    .dash-brand-name { font-size: 18px; font-weight: 900; letter-spacing: -0.5px; }
+    .dash-brand-name span { color: var(--green); }
+
+    .user-pill {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--surface2); border: 1px solid var(--border);
+      padding: 8px 16px 8px 8px; border-radius: 100px;
+    }
+    .user-avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      object-fit: cover; background: var(--surface3);
+    }
+    .user-name { font-size: 13px; font-weight: 600; }
+
+    .btn-logout {
+      background: none; border: 1px solid var(--border);
+      color: var(--text-muted); font-family: var(--font-display);
+      font-size: 12px; padding: 8px 16px; border-radius: 100px;
+      cursor: pointer; transition: all 0.2s;
+      letter-spacing: 0.5px;
+    }
+    .btn-logout:hover { border-color: var(--accent1); color: var(--accent1); }
+
+    /* ── HERO STAT ── */
+    .hero-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    @media (max-width: 768px) {
+      .hero-section { grid-template-columns: 1fr; }
+    }
+
+    .hero-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      position: relative; overflow: hidden;
+      animation: cardSlideIn 0.5s ease both;
+    }
+    .hero-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent-color, var(--green)), transparent);
+    }
+    .hero-card:nth-child(1) { --accent-color: var(--green); animation-delay: 0.1s; }
+    .hero-card:nth-child(2) { --accent-color: var(--accent4); animation-delay: 0.15s; }
+    .hero-card:nth-child(3) { --accent-color: var(--accent2); animation-delay: 0.2s; }
+
+    @keyframes cardSlideIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-label {
+      font-size: 11px; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--text-dim);
+      margin-bottom: 16px;
+    }
+    .hero-img {
+      width: 72px; height: 72px; border-radius: 12px;
+      object-fit: cover; margin-bottom: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+    .hero-img.circle { border-radius: 50%; }
+    .hero-value { font-size: 22px; font-weight: 700; line-height: 1.2; margin-bottom: 4px; }
+    .hero-meta { font-size: 13px; color: var(--text-muted); }
+
+    /* ── TIME RANGE SELECTOR ── */
+    .time-selector {
+      display: flex; gap: 8px; margin-bottom: 40px; flex-wrap: wrap;
+    }
+    .time-btn {
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--text-muted); font-family: var(--font-display);
+      font-size: 13px; font-weight: 600;
+      padding: 10px 20px; border-radius: 100px;
+      cursor: pointer; transition: all 0.2s;
+      letter-spacing: 0.3px;
+    }
+    .time-btn:hover { border-color: var(--green); color: var(--text); }
+    .time-btn.active {
+      background: var(--green); border-color: var(--green);
+      color: var(--black);
+    }
+
+    /* ── SECTION TITLE ── */
+    .section-title {
+      font-size: 13px; font-weight: 700; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--text-dim);
+      margin-bottom: 20px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .section-title::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+
+    /* ── TRACKS GRID ── */
+    .tracks-section { margin-bottom: 48px; }
+    .track-list { display: flex; flex-direction: column; gap: 8px; }
+
+    .track-card {
+      display: flex; align-items: center; gap: 16px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 14px 16px;
+      cursor: pointer; transition: all 0.25s ease;
+      animation: cardSlideIn 0.5s ease both;
+      position: relative; overflow: hidden;
+    }
+    .track-card::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(29,185,84,0.05), transparent);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .track-card:hover { border-color: rgba(29,185,84,0.3); transform: translateX(4px); }
+    .track-card:hover::before { opacity: 1; }
+
+    .track-rank {
+      font-family: var(--font-mono);
+      font-size: 13px; font-weight: 700;
+      color: var(--text-dim); min-width: 28px;
+    }
+    .track-art {
+      width: 52px; height: 52px; border-radius: 8px;
+      object-fit: cover; flex-shrink: 0;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    }
+    .track-info { flex: 1; min-width: 0; }
+    .track-name {
+      font-size: 15px; font-weight: 600;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .track-artist { font-size: 13px; color: var(--text-muted); margin-top: 3px; }
+
+    .track-bar-wrap {
+      width: 80px; height: 4px; background: var(--surface3);
+      border-radius: 2px; overflow: hidden;
+    }
+    .track-bar {
+      height: 100%; background: var(--green); border-radius: 2px;
+      transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ── ARTISTS GRID ── */
+    .artists-section { margin-bottom: 48px; }
+    .artists-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+    }
+    @media (max-width: 900px) { .artists-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 500px) { .artists-grid { grid-template-columns: repeat(2, 1fr); } }
+
+    .artist-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 20px; padding: 20px 16px;
+      text-align: center;
+      cursor: pointer; transition: all 0.3s ease;
+      animation: cardSlideIn 0.5s ease both;
+      position: relative; overflow: hidden;
+    }
+    .artist-card:hover {
+      border-color: rgba(29,185,84,0.4);
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+
+    .artist-rank-badge {
+      position: absolute; top: 12px; left: 12px;
+      background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+      border: 1px solid var(--border);
+      font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+      color: var(--green); padding: 3px 7px; border-radius: 6px;
+    }
+
+    .artist-img {
+      width: 80px; height: 80px; border-radius: 50%;
+      object-fit: cover; margin: 0 auto 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      border: 2px solid var(--border);
+      transition: border-color 0.3s;
+      display: block;
+    }
+    .artist-card:hover .artist-img { border-color: var(--green); }
+
+    .artist-name {
+      font-size: 14px; font-weight: 700;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .artist-genre { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+    /* ── GENRE BANNER ── */
+    .genre-banner {
+      background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 36px 40px;
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 48px; flex-wrap: wrap; gap: 20px;
+      position: relative; overflow: hidden;
+      animation: cardSlideIn 0.5s 0.3s ease both;
+    }
+    .genre-banner::before {
+      content: '';
+      position: absolute; top: -60px; right: -60px;
+      width: 240px; height: 240px;
+      background: radial-gradient(circle, rgba(29,185,84,0.15) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .genre-left {}
+    .genre-eyebrow {
+      font-size: 11px; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--green); margin-bottom: 8px;
+    }
+    .genre-name {
+      font-size: clamp(28px, 5vw, 52px);
+      font-weight: 900; letter-spacing: -2px; line-height: 1;
+      text-transform: capitalize;
+    }
+    .genre-desc { font-size: 14px; color: var(--text-muted); margin-top: 10px; }
+
+    .genre-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+    .genre-tag {
+      background: rgba(29,185,84,0.12); border: 1px solid rgba(29,185,84,0.25);
+      color: var(--green); font-size: 12px; font-weight: 600;
+      padding: 6px 14px; border-radius: 100px;
+    }
+
+    /* ── STATS ROW ── */
+    .stats-row {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 16px; margin-bottom: 48px;
+    }
+    @media (max-width: 600px) { .stats-row { grid-template-columns: 1fr; } }
+
+    .stat-block {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 20px; padding: 24px;
+      animation: cardSlideIn 0.5s ease both;
+    }
+    .stat-block:nth-child(1) { animation-delay: 0.1s; }
+    .stat-block:nth-child(2) { animation-delay: 0.15s; }
+    .stat-block:nth-child(3) { animation-delay: 0.2s; }
+
+    .stat-icon { font-size: 28px; margin-bottom: 12px; display: block; }
+    .stat-number {
+      font-size: 36px; font-weight: 900; letter-spacing: -2px;
+      color: var(--green);
+    }
+    .stat-label { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+
+    /* ── SHARE SECTION ── */
+    .share-section {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 24px; padding: 32px 40px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 20px;
+      animation: cardSlideIn 0.5s 0.4s ease both;
+    }
+    .share-text h3 { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+    .share-text p { font-size: 14px; color: var(--text-muted); }
+    .share-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    .btn-share {
+      display: flex; align-items: center; gap: 8px;
+      padding: 12px 20px; border-radius: 100px;
+      font-family: var(--font-display); font-size: 13px; font-weight: 700;
+      border: none; cursor: pointer; transition: all 0.2s;
+      letter-spacing: 0.3px;
+    }
+    .btn-share.twitter { background: #1DA1F2; color: #fff; }
+    .btn-share.copy { background: var(--surface3); color: var(--text); border: 1px solid var(--border); }
+    .btn-share:hover { transform: translateY(-2px); opacity: 0.9; }
+
+    /* ── LOADING ── */
+    .loading-screen {
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 24px;
+    }
+    .loading-bars {
+      display: flex; gap: 5px; align-items: flex-end; height: 40px;
+    }
+    .loading-bars span {
+      display: block; width: 6px; border-radius: 3px;
+      background: var(--green);
+      animation: barBounce 1s ease-in-out infinite;
+    }
+    .loading-bars span:nth-child(1) { height: 24px; animation-delay: 0s; }
+    .loading-bars span:nth-child(2) { height: 36px; animation-delay: 0.1s; }
+    .loading-bars span:nth-child(3) { height: 20px; animation-delay: 0.2s; }
+    .loading-bars span:nth-child(4) { height: 40px; animation-delay: 0.3s; }
+    .loading-bars span:nth-child(5) { height: 28px; animation-delay: 0.4s; }
+
+    @keyframes barBounce {
+      0%, 100% { transform: scaleY(0.5); opacity: 0.4; }
+      50% { transform: scaleY(1); opacity: 1; }
+    }
+    .loading-text { font-size: 16px; color: var(--text-muted); font-weight: 300; letter-spacing: 1px; }
+
+    /* ── ERROR ── */
+    .error-card {
+      background: rgba(255,107,107,0.1); border: 1px solid rgba(255,107,107,0.3);
+      border-radius: 16px; padding: 24px; margin: 20px 0;
+      color: var(--accent1); font-size: 14px;
+    }
+
+    /* ── TOOLTIP COPIED ── */
+    .copied-toast {
+      position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+      background: var(--green); color: var(--black);
+      font-weight: 700; font-size: 14px; letter-spacing: 0.5px;
+      padding: 12px 28px; border-radius: 100px;
+      animation: toastIn 2.5s ease forwards;
+      pointer-events: none; z-index: 10000;
+    }
+    @keyframes toastIn {
+      0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+      15% { opacity: 1; transform: translateX(-50%) translateY(0); }
+      75% { opacity: 1; transform: translateX(-50%) translateY(0); }
+      100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+    }
+
+    /* ── RANK COLOR ── */
+    .rank-1 { color: var(--accent2); }
+    .rank-2 { color: #c0c0c0; }
+    .rank-3 { color: #cd7f32; }
+    .rank-other { color: var(--text-dim); }
+  </style>
+</head>
+<body>
+<div id="app"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.22.5/babel.min.js"></script>
+
+<script type="text/babel">
+const { useState, useEffect, useCallback } = React;
+
+// ── CONFIG ──
+const CLIENT_ID = '00f4d8a8c2634a6eb78c5b995349e9e3';
+const REDIRECT_URI = 'https://hwxgmc.csb.app/callback';
+const SCOPES = 'user-top-read user-read-private user-read-email';
+const BACKEND_URL = ''; // same-origin when served by Express
+
+// ── SPOTIFY AUTH ──
+function generateCodeVerifier(length = 128) {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
+  let result = '';
+  const randomValues = crypto.getRandomValues(new Uint8Array(length));
+  randomValues.forEach(v => { result += chars[v % chars.length]; });
+  return result;
+}
+
+async function generateCodeChallenge(verifier) {
+  const data = new TextEncoder().encode(verifier);
+  const digest = await crypto.subtle.digest('SHA-256', data);
+  return btoa(String.fromCharCode(...new Uint8Array(digest)))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+}
+
+async function initiateLogin() {
+  const verifier = generateCodeVerifier();
+  const challenge = await generateCodeChallenge(verifier);
+  sessionStorage.setItem('pkce_verifier', verifier);
+
+  const params = new URLSearchParams({
+    client_id: CLIENT_ID,
+    response_type: 'code',
+    redirect_uri: REDIRECT_URI,
+    code_challenge_method: 'S256',
+    code_challenge: challenge,
+    scope: SCOPES,
+    show_dialog: 'true',
+  });
+  window.location.href = `https://accounts.spotify.com/authorize?${params}`;
+}
+
+async function exchangeToken(code) {
+  const verifier = sessionStorage.getItem('pkce_verifier');
+  if (!verifier) throw new Error('No PKCE verifier found');
+
+  const body = new URLSearchParams({
+    client_id: CLIENT_ID,
+    grant_type: 'authorization_code',
+    code,
+    redirect_uri: REDIRECT_URI,
+    code_verifier: verifier,
+  });
+
+  const response = await fetch('https://accounts.spotify.com/api/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body,
+  });
+  if (!response.ok) {
+    const err = await response.json();
+    throw new Error(err.error_description || 'Token exchange failed');
+  }
+  const data = await response.json();
+  sessionStorage.removeItem('pkce_verifier');
+  return data;
+}
+
+// ── SPOTIFY API ──
+async function spotifyFetch(endpoint, token) {
+  const res = await fetch(`https://api.spotify.com/v1${endpoint}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) {
+    if (res.status === 401) throw new Error('TOKEN_EXPIRED');
+    throw new Error(`Spotify API error: ${res.status}`);
+  }
+  return res.json();
+}
+
+async function fetchAllData(token, timeRange) {
+  const [tracksData, artistsData, profileData] = await Promise.all([
+    spotifyFetch(`/me/top/tracks?limit=10&time_range=${timeRange}`, token),
+    spotifyFetch(`/me/top/artists?limit=10&time_range=${timeRange}`, token),
+    spotifyFetch('/me', token),
+  ]);
+  return { tracks: tracksData.items, artists: artistsData.items, profile: profileData };
+}
+
+// ── HELPERS ──
+function getTopGenre(artists) {
+  const genreCount = {};
+  artists.forEach(artist => {
+    artist.genres.forEach(g => { genreCount[g] = (genreCount[g] || 0) + 1; });
+  });
+  const sorted = Object.entries(genreCount).sort((a, b) => b[1] - a[1]);
+  return sorted.length > 0 ? sorted[0][0] : 'Unknown';
+}
+
+function getRelatedGenres(artists) {
+  const genreCount = {};
+  artists.forEach(artist => {
+    artist.genres.forEach(g => { genreCount[g] = (genreCount[g] || 0) + 1; });
+  });
+  return Object.entries(genreCount).sort((a, b) => b[1] - a[1]).slice(0, 5).map(e => e[0]);
+}
+
+function rankClass(i) {
+  if (i === 0) return 'rank-1';
+  if (i === 1) return 'rank-2';
+  if (i === 2) return 'rank-3';
+  return 'rank-other';
+}
+
+// ── COMPONENTS ──
+
+function LoadingScreen({ message = 'Loading your stats…' }) {
+  return (
+    <div className="loading-screen">
+      <div className="loading-bars">
+        {[1,2,3,4,5].map(i => <span key={i}/>)}
+      </div>
+      <p className="loading-text">{message}</p>
+    </div>
+  );
+}
+
+function LoginScreen() {
+  return (
+    <div className="login-screen">
+      <div className="logo-mark">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+        </svg>
+      </div>
+      <h1 className="login-title">Forever<br/><span>Wrapped</span></h1>
+      <p className="login-subtitle">Your Spotify listening history, beautifully visualized — for any time period, any time.</p>
+      <button className="btn-login" onClick={initiateLogin}>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+        </svg>
+        Connect with Spotify
+      </button>
+      <div className="login-features">
+        {['Top Tracks', 'Top Artists', 'Genre Analysis', 'All Time Ranges'].map(f => (
+          <div className="feature-pill" key={f}><span className="dot"/>{f}</div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function TimeSelector({ value, onChange }) {
+  const options = [
+    { label: 'Last 4 Weeks', value: 'short_term' },
+    { label: 'Last 6 Months', value: 'medium_term' },
+    { label: 'All Time', value: 'long_term' },
+  ];
+  return (
+    <div className="time-selector">
+      {options.map(o => (
+        <button
+          key={o.value}
+          className={`time-btn ${value === o.value ? 'active' : ''}`}
+          onClick={() => onChange(o.value)}
+        >{o.label}</button>
+      ))}
+    </div>
+  );
+}
+
+function TrackRow({ track, index }) {
+  const popularity = track.popularity || 60;
+  return (
+    <div className="track-card" style={{ animationDelay: `${index * 0.06}s` }}
+      onClick={() => window.open(track.external_urls?.spotify, '_blank')}>
+      <span className={`track-rank ${rankClass(index)}`}>#{index + 1}</span>
+      <img
+        className="track-art"
+        src={track.album?.images?.[0]?.url || 'https://via.placeholder.com/52'}
+        alt={track.name}
+        onError={e => { e.target.src = 'https://via.placeholder.com/52/1a1a1a/555?text=♪'; }}
+      />
+      <div className="track-info">
+        <div className="track-name">{track.name}</div>
+        <div className="track-artist">{track.artists?.map(a => a.name).join(', ')}</div>
+      </div>
+      <div className="track-bar-wrap">
+        <div className="track-bar" style={{ width: `${popularity}%` }}/>
+      </div>
+    </div>
+  );
+}
+
+function ArtistCard({ artist, index }) {
+  return (
+    <div className="artist-card" style={{ animationDelay: `${index * 0.07}s` }}
+      onClick={() => window.open(artist.external_urls?.spotify, '_blank')}>
+      <span className="artist-rank-badge">#{index + 1}</span>
+      <img
+        className="artist-img"
+        src={artist.images?.[0]?.url || 'https://via.placeholder.com/80'}
+        alt={artist.name}
+        onError={e => { e.target.src = 'https://via.placeholder.com/80/1a1a1a/555?text=🎵'; }}
+      />
+      <div className="artist-name">{artist.name}</div>
+      <div className="artist-genre">{artist.genres?.[0] || 'Artist'}</div>
+    </div>
+  );
+}
+
+function Dashboard({ token, onLogout }) {
+  const [timeRange, setTimeRange] = useState('medium_term');
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [showCopied, setShowCopied] = useState(false);
+
+  const load = useCallback(async () => {
+    setLoading(true); setError(null);
+    try {
+      const result = await fetchAllData(token, timeRange);
+      setData(result);
+    } catch (e) {
+      if (e.message === 'TOKEN_EXPIRED') onLogout();
+      else setError(e.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [token, timeRange]);
+
+  useEffect(() => { load(); }, [load]);
+
+  const handleShare = () => {
+    const topTrack = data?.tracks?.[0]?.name || '?';
+    const topArtist = data?.artists?.[0]?.name || '?';
+    const genre = getTopGenre(data?.artists || []);
+    const text = `🎵 My Forever Wrapped:\n#1 Track: ${topTrack}\n#1 Artist: ${topArtist}\nTop Genre: ${genre}\n\nCheck yours at Forever Wrapped!`;
+    navigator.clipboard.writeText(text).then(() => {
+      setShowCopied(true);
+      setTimeout(() => setShowCopied(false), 2600);
+    });
+  };
+
+  const tweetShare = () => {
+    const topArtist = data?.artists?.[0]?.name || '?';
+    const genre = getTopGenre(data?.artists || []);
+    const text = encodeURIComponent(`🎵 My #ForeverWrapped: Top Artist is ${topArtist} and I'm deep in ${genre} 🎶`);
+    window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
+  };
+
+  if (loading) return <LoadingScreen message="Fetching your music data…" />;
+
+  const topTracks = data?.tracks?.slice(0, 5) || [];
+  const topArtists = data?.artists?.slice(0, 5) || [];
+  const topGenre = getTopGenre(data?.artists || []);
+  const relatedGenres = getRelatedGenres(data?.artists || []).slice(0, 4);
+  const totalArtists = data?.artists?.length || 0;
+  const profile = data?.profile;
+
+  const timeLabel = { short_term: 'Last 4 Weeks', medium_term: 'Last 6 Months', long_term: 'All Time' }[timeRange];
+
+  return (
+    <div className="dashboard">
+      {/* HEADER */}
+      <div className="dash-header">
+        <div className="dash-brand">
+          <div className="dash-brand-dot"/>
+          <div className="dash-brand-name">Forever<span>Wrapped</span></div>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          {profile && (
+            <div className="user-pill">
+              <img
+                className="user-avatar"
+                src={profile.images?.[0]?.url || ''}
+                alt={profile.display_name}
+                onError={e => { e.target.style.display = 'none'; }}
+              />
+              <span className="user-name">{profile.display_name}</span>
+            </div>
+          )}
+          <button className="btn-logout" onClick={onLogout}>Sign out</button>
+        </div>
+      </div>
+
+      {/* TIME SELECTOR */}
+      <TimeSelector value={timeRange} onChange={setTimeRange} />
+
+      {error && <div className="error-card">⚠️ {error} — <button onClick={load} style={{ background:'none', border:'none', color:'inherit', cursor:'pointer', textDecoration:'underline' }}>Retry</button></div>}
+
+      {/* HERO CARDS */}
+      {topTracks[0] && topArtists[0] && (
+        <div className="hero-section">
+          <div className="hero-card">
+            <div className="hero-label">🎵 Top Track</div>
+            <img className="hero-img" src={topTracks[0].album?.images?.[0]?.url} alt={topTracks[0].name}
+              onError={e => { e.target.src='https://via.placeholder.com/72/1a1a1a/555?text=♪'; }} />
+            <div className="hero-value">{topTracks[0].name}</div>
+            <div className="hero-meta">{topTracks[0].artists?.map(a=>a.name).join(', ')}</div>
+          </div>
+          <div className="hero-card">
+            <div className="hero-label">🎤 Top Artist</div>
+            <img className="hero-img circle" src={topArtists[0].images?.[0]?.url} alt={topArtists[0].name}
+              onError={e => { e.target.src='https://via.placeholder.com/72/1a1a1a/555?text=🎵'; }} />
+            <div className="hero-value">{topArtists[0].name}</div>
+            <div className="hero-meta">{topArtists[0].genres?.[0] || 'Artist'}</div>
+          </div>
+          <div className="hero-card">
+            <div className="hero-label">🎭 Listening Window</div>
+            <div style={{ fontSize: 48, marginBottom: 8 }}>📊</div>
+            <div className="hero-value" style={{ color: 'var(--accent2)' }}>{timeLabel}</div>
+            <div className="hero-meta">{topTracks.length} tracks · {topArtists.length} artists analyzed</div>
+          </div>
+        </div>
+      )}
+
+      {/* STATS ROW */}
+      <div className="stats-row">
+        <div className="stat-block">
+          <span className="stat-icon">🎵</span>
+          <div className="stat-number">{topTracks.length}</div>
+          <div className="stat-label">Top tracks this period</div>
+        </div>
+        <div className="stat-block">
+          <span className="stat-icon">🎤</span>
+          <div className="stat-number">{totalArtists}</div>
+          <div className="stat-label">Artists in your rotation</div>
+        </div>
+        <div className="stat-block">
+          <span className="stat-icon">🎭</span>
+          <div className="stat-number">{relatedGenres.length}</div>
+          <div className="stat-label">Unique genres discovered</div>
+        </div>
+      </div>
+
+      {/* GENRE BANNER */}
+      <div className="genre-banner">
+        <div className="genre-left">
+          <div className="genre-eyebrow">Your Top Genre</div>
+          <div className="genre-name">{topGenre}</div>
+          <div className="genre-desc">Based on your most-played artists this period</div>
+        </div>
+        <div className="genre-tags">
+          {relatedGenres.map(g => <span className="genre-tag" key={g}>{g}</span>)}
+        </div>
+      </div>
+
+      {/* TOP TRACKS */}
+      <div className="tracks-section">
+        <div className="section-title">Top Tracks</div>
+        <div className="track-list">
+          {topTracks.map((t, i) => <TrackRow key={t.id} track={t} index={i} />)}
+        </div>
+      </div>
+
+      {/* TOP ARTISTS */}
+      <div className="artists-section">
+        <div className="section-title">Top Artists</div>
+        <div className="artists-grid">
+          {topArtists.map((a, i) => <ArtistCard key={a.id} artist={a} index={i} />)}
+        </div>
+      </div>
+
+      {/* SHARE */}
+      <div className="share-section">
+        <div className="share-text">
+          <h3>Share your Wrapped</h3>
+          <p>Let the world know what you've been listening to</p>
+        </div>
+        <div className="share-buttons">
+          <button className="btn-share twitter" onClick={tweetShare}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.741l7.73-8.835L1.254 2.25H8.08l4.264 5.633 5.9-5.633zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            Tweet
+          </button>
+          <button className="btn-share copy" onClick={handleShare}>
+            📋 Copy Stats
+          </button>
+        </div>
+      </div>
+
+      {showCopied && <div className="copied-toast">✓ Copied to clipboard!</div>}
+    </div>
+  );
+}
+
+// ── MAIN APP ──
+function App() {
+  const [token, setToken] = useState(() => sessionStorage.getItem('spotify_token'));
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+    const err = params.get('error');
+
+    if (err) {
+      setError('Spotify login was cancelled or failed.');
+      window.history.replaceState({}, '', '/');
+      return;
+    }
+
+    if (code) {
+      window.history.replaceState({}, '', '/');
+      setLoading(true);
+      exchangeToken(code)
+        .then(data => {
+          sessionStorage.setItem('spotify_token', data.access_token);
+          setToken(data.access_token);
+        })
+        .catch(e => setError(e.message))
+        .finally(() => setLoading(false));
+    }
+  }, []);
+
+  const handleLogout = () => {
+    sessionStorage.removeItem('spotify_token');
+    setToken(null);
+  };
+
+  return (
+    <div id="app">
+      <div className="bg-orbs">
+        <div className="orb orb1"/><div className="orb orb2"/><div className="orb orb3"/>
+      </div>
+      {loading && <LoadingScreen message="Connecting to Spotify…" />}
+      {error && !loading && (
+        <div className="login-screen">
+          <div className="error-card" style={{ maxWidth: 400 }}>
+            ⚠️ {error}
+          </div>
+          <button className="btn-login" style={{ marginTop: 24 }} onClick={() => setError(null)}>
+            Try Again
+          </button>
+        </div>
+      )}
+      {!loading && !error && !token && <LoginScreen />}
+      {!loading && !error && token && <Dashboard token={token} onLogout={handleLogout} />}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('app')).render(<App />);
+</script>
+</body>
+</html>
