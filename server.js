@@ -84,4 +84,24 @@ app.get('/api/top-artists', async (req, res) => {
   const token = req.headers.authorization?.split(' ')[1];
   if (!token) return res.status(401).json({ error: 'No token' });
   try {
-    const
+    const r = await fetch(`https://api.spotify.com/v1/me/top/artists?time_range=${time_range}&limit=${limit}`,
+      { headers: { Authorization: `Bearer ${token}` } });
+    const d = await r.json();
+    res.status(r.ok ? 200 : r.status).json(d);
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.get('/api/profile', async (req, res) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) return res.status(401).json({ error: 'No token' });
+  try {
+    const r = await fetch('https://api.spotify.com/v1/me',
+      { headers: { Authorization: `Bearer ${token}` } });
+    const d = await r.json();
+    res.status(r.ok ? 200 : r.status).json(d);
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.listen(PORT, () => {
+  console.log(`Forever Wrapped running on port ${PORT}`);
+});
