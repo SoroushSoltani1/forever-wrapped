@@ -528,7 +528,7 @@ async function generateCodeChallenge(verifier) {
 async function initiateLogin() {
   const verifier = generateCodeVerifier();
   const challenge = await generateCodeChallenge(verifier);
-  sessionStorage.setItem('pkce_verifier', verifier);
+  localStorage.setItem('pkce_verifier', verifier);
 
   const params = new URLSearchParams({
     client_id: CLIENT_ID,
@@ -543,7 +543,7 @@ async function initiateLogin() {
 }
 
 async function exchangeToken(code) {
-  const verifier = sessionStorage.getItem('pkce_verifier');
+  const verifier = localStorage.getItem('pkce_verifier');
   if (!verifier) throw new Error('No PKCE verifier found');
 
   const body = new URLSearchParams({
@@ -564,7 +564,7 @@ async function exchangeToken(code) {
     throw new Error(err.error_description || 'Token exchange failed');
   }
   const data = await response.json();
-  sessionStorage.removeItem('pkce_verifier');
+  localStorage.removeItem('pkce_verifier');
   return data;
 }
 
