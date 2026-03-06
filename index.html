@@ -88,12 +88,18 @@
     .artist-card:hover .artist-img { border-color: var(--green); }
     .artist-name { font-size: 14px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .artist-genre { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
-    .genre-banner { background: linear-gradient(135deg, var(--surface), var(--surface2)); border: 1px solid var(--border); border-radius: 24px; padding: 36px 40px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 48px; flex-wrap: wrap; gap: 20px; position: relative; overflow: hidden; }
-    .genre-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--green); margin-bottom: 8px; }
-    .genre-name { font-size: clamp(28px,5vw,52px); font-weight: 900; letter-spacing: -2px; line-height: 1; text-transform: capitalize; }
-    .genre-desc { font-size: 14px; color: var(--text-muted); margin-top: 10px; }
-    .genre-tags { display: flex; gap: 8px; flex-wrap: wrap; }
-    .genre-tag { background: rgba(29,185,84,0.12); border: 1px solid rgba(29,185,84,0.25); color: var(--green); font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 100px; }
+    .vibe-banner { background: linear-gradient(135deg, var(--surface), var(--surface2)); border: 1px solid var(--border); border-radius: 24px; padding: 36px 40px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 48px; flex-wrap: wrap; gap: 24px; position: relative; overflow: hidden; }
+    .vibe-banner::before { content: ''; position: absolute; top: -60px; right: -60px; width: 240px; height: 240px; background: radial-gradient(circle, rgba(29,185,84,0.15) 0%, transparent 70%); border-radius: 50%; }
+    .vibe-left {}
+    .vibe-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--green); margin-bottom: 8px; }
+    .vibe-value { font-size: clamp(28px,5vw,52px); font-weight: 900; letter-spacing: -2px; line-height: 1; }
+    .vibe-desc { font-size: 14px; color: var(--text-muted); margin-top: 10px; }
+    .decade-bars { display: flex; flex-direction: column; gap: 10px; min-width: 200px; }
+    .decade-row { display: flex; align-items: center; gap: 12px; }
+    .decade-label { font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: var(--text-muted); min-width: 40px; }
+    .decade-bar-wrap { flex: 1; height: 6px; background: var(--surface3); border-radius: 3px; overflow: hidden; }
+    .decade-bar { height: 100%; background: var(--green); border-radius: 3px; transition: width 1s ease; }
+    .decade-count { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); min-width: 20px; text-align: right; }
     .stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 48px; }
     @media (max-width: 600px) { .stats-row { grid-template-columns: 1fr; } }
     .stat-block { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 24px; animation: cardSlideIn 0.5s ease both; }
@@ -111,11 +117,7 @@
     .loading-screen { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; }
     .loading-bars { display: flex; gap: 5px; align-items: flex-end; height: 40px; }
     .loading-bars span { display: block; width: 6px; border-radius: 3px; background: var(--green); animation: barBounce 1s ease-in-out infinite; }
-    .loading-bars span:nth-child(1) { height: 24px; animation-delay: 0s; }
-    .loading-bars span:nth-child(2) { height: 36px; animation-delay: 0.1s; }
-    .loading-bars span:nth-child(3) { height: 20px; animation-delay: 0.2s; }
-    .loading-bars span:nth-child(4) { height: 40px; animation-delay: 0.3s; }
-    .loading-bars span:nth-child(5) { height: 28px; animation-delay: 0.4s; }
+    .loading-bars span:nth-child(1) { height: 24px; } .loading-bars span:nth-child(2) { height: 36px; animation-delay: 0.1s; } .loading-bars span:nth-child(3) { height: 20px; animation-delay: 0.2s; } .loading-bars span:nth-child(4) { height: 40px; animation-delay: 0.3s; } .loading-bars span:nth-child(5) { height: 28px; animation-delay: 0.4s; }
     .loading-text { font-size: 16px; color: var(--text-muted); font-weight: 300; letter-spacing: 1px; }
     .error-card { background: rgba(255,107,107,0.1); border: 1px solid rgba(255,107,107,0.3); border-radius: 16px; padding: 24px; margin: 20px 0; color: var(--accent1); font-size: 14px; }
     .empty-state { text-align: center; padding: 80px 20px; }
@@ -192,45 +194,52 @@ async function exchangeToken(code) {
 async function fetchAllData(token, timeRange) {
   setDebug('Fetching ' + timeRange + ' data...');
   const headers = { Authorization: `Bearer ${token}` };
-
   const safeGet = async (url) => {
     try {
       const res = await fetch(url, { headers });
-      if (!res.ok) {
-        setDebug('API error ' + res.status + ' for ' + url.split('?')[0].split('/').pop());
-        return null;
-      }
+      if (!res.ok) { setDebug('API error ' + res.status); return null; }
       return await res.json();
-    } catch(e) {
-      setDebug('Fetch failed: ' + e.message);
-      return null;
-    }
+    } catch(e) { setDebug('Fetch failed: ' + e.message); return null; }
   };
-
   const [tracksData, artistsData, profileData] = await Promise.all([
     safeGet(`https://api.spotify.com/v1/me/top/tracks?limit=10&time_range=${timeRange}`),
-    safeGet(`https://api.spotify.com/v1/me/top/artists?limit=50&time_range=${timeRange}`),
+    safeGet(`https://api.spotify.com/v1/me/top/artists?limit=10&time_range=${timeRange}`),
     safeGet('https://api.spotify.com/v1/me'),
   ]);
-
   const tracks = tracksData?.items || [];
   const artists = artistsData?.items || [];
   setDebug('Got ' + tracks.length + ' tracks, ' + artists.length + ' artists');
-
   return { tracks, artists, profile: profileData || {} };
+}
+
+function getTopDecade(tracks) {
+  const decades = {};
+  tracks.forEach(t => {
+    const year = parseInt((t.album?.release_date || '2000').slice(0, 4));
+    const decade = Math.floor(year / 10) * 10;
+    decades[decade] = (decades[decade] || 0) + 1;
+  });
+  const sorted = Object.entries(decades).sort((a, b) => b[1] - a[1]);
+  return sorted.length > 0 ? sorted[0][0] + 's' : null;
+}
+
+function getDecadeBreakdown(tracks) {
+  const decades = {};
+  tracks.forEach(t => {
+    const year = parseInt((t.album?.release_date || '2000').slice(0, 4));
+    const decade = Math.floor(year / 10) * 10;
+    decades[decade] = (decades[decade] || 0) + 1;
+  });
+  const sorted = Object.entries(decades).sort((a, b) => b[1] - a[1]).slice(0, 4);
+  const max = sorted[0]?.[1] || 1;
+  return sorted.map(([decade, count]) => ({ decade: decade + 's', count, pct: Math.round((count / max) * 100) }));
 }
 
 function getTopGenre(artists) {
   const g = {};
   artists.forEach(a => (a.genres||[]).forEach(x => { g[x] = (g[x]||0)+1; }));
   const s = Object.entries(g).sort((a,b) => b[1]-a[1]);
-  return s.length > 0 ? s[0][0] : 'Unknown';
-}
-
-function getRelatedGenres(artists) {
-  const g = {};
-  artists.forEach(a => (a.genres||[]).forEach(x => { g[x] = (g[x]||0)+1; }));
-  return Object.entries(g).sort((a,b) => b[1]-a[1]).slice(0,5).map(e => e[0]);
+  return s.length > 0 ? s[0][0] : null;
 }
 
 function rankClass(i) {
@@ -259,7 +268,7 @@ function LoginScreen() {
         Connect with Spotify
       </button>
       <div className="login-features">
-        {['Top Tracks','Top Artists','Genre Analysis','All Time Ranges'].map(f=>(
+        {['Top Tracks','Top Artists','Era Breakdown','All Time Ranges'].map(f=>(
           <div className="feature-pill" key={f}><span className="dot"/>{f}</div>
         ))}
       </div>
@@ -302,6 +311,37 @@ function ArtistCard({ artist, index }) {
   );
 }
 
+function VibeBanner({ tracks, artists }) {
+  const topDecade = getTopDecade(tracks);
+  const decadeBreakdown = getDecadeBreakdown(tracks);
+  const topGenre = getTopGenre(artists);
+
+  return (
+    <div className="vibe-banner">
+      <div className="vibe-left">
+        <div className="vibe-eyebrow">Your Music Era</div>
+        <div className="vibe-value">{topDecade || 'Mixed Eras'}</div>
+        <div className="vibe-desc">
+          {topGenre ? `Mostly ${topGenre}` : 'Based on your top tracks'}
+        </div>
+      </div>
+      {decadeBreakdown.length > 0 && (
+        <div className="decade-bars">
+          {decadeBreakdown.map(({ decade, count, pct }) => (
+            <div className="decade-row" key={decade}>
+              <span className="decade-label">{decade}</span>
+              <div className="decade-bar-wrap">
+                <div className="decade-bar" style={{width: pct + '%'}}/>
+              </div>
+              <span className="decade-count">{count}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function Dashboard({ token, onLogout }) {
   const [timeRange, setTimeRange] = useState('medium_term');
   const [data, setData] = useState(null);
@@ -330,19 +370,18 @@ function Dashboard({ token, onLogout }) {
 
   const topTracks = (data?.tracks||[]).slice(0,5);
   const topArtists = (data?.artists||[]).slice(0,5);
-  const topGenre = getTopGenre(data?.artists||[]);
-  const relatedGenres = getRelatedGenres(data?.artists||[]).slice(0,4);
   const profile = data?.profile||{};
   const timeLabel = {short_term:'Last 4 Weeks',medium_term:'Last 6 Months',long_term:'All Time'}[timeRange];
   const hasData = topTracks.length > 0 || topArtists.length > 0;
+  const topDecade = getTopDecade(data?.tracks||[]);
 
   const handleShare = () => {
-    const text = `🎵 My Forever Wrapped:\n#1 Track: ${topTracks[0]?.name||'?'}\n#1 Artist: ${topArtists[0]?.name||'?'}\nTop Genre: ${topGenre}`;
+    const text = `🎵 My Forever Wrapped:\n#1 Track: ${topTracks[0]?.name||'?'}\n#1 Artist: ${topArtists[0]?.name||'?'}\nTop Era: ${topDecade||'Mixed'}\n\nCheck yours at forever-wrapped.onrender.com`;
     navigator.clipboard.writeText(text).then(()=>{ setShowCopied(true); setTimeout(()=>setShowCopied(false),2600); });
   };
 
   const tweetShare = () => {
-    const text = encodeURIComponent(`🎵 My #ForeverWrapped: Top Artist is ${topArtists[0]?.name||'?'} — listening to a lot of ${topGenre} 🎶`);
+    const text = encodeURIComponent(`🎵 My #ForeverWrapped: Top Artist is ${topArtists[0]?.name||'?'} and I'm stuck in the ${topDecade||'past'} 🎶`);
     window.open(`https://twitter.com/intent/tweet?text=${text}`,'_blank');
   };
 
@@ -416,17 +455,10 @@ function Dashboard({ token, onLogout }) {
           <div className="stats-row">
             <div className="stat-block"><span className="stat-icon">🎵</span><div className="stat-number">{topTracks.length}</div><div className="stat-label">Top tracks</div></div>
             <div className="stat-block"><span className="stat-icon">🎤</span><div className="stat-number">{topArtists.length}</div><div className="stat-label">Top artists</div></div>
-            <div className="stat-block"><span className="stat-icon">🎭</span><div className="stat-number">{relatedGenres.length}</div><div className="stat-label">Genres found</div></div>
+            <div className="stat-block"><span className="stat-icon">📅</span><div className="stat-number">{topDecade||'—'}</div><div className="stat-label">Your top era</div></div>
           </div>
 
-          <div className="genre-banner">
-            <div>
-              <div className="genre-eyebrow">Your Top Genre</div>
-              <div className="genre-name">{topGenre}</div>
-              <div className="genre-desc">Based on your most-played artists</div>
-            </div>
-            <div className="genre-tags">{relatedGenres.map(g=><span className="genre-tag" key={g}>{g}</span>)}</div>
-          </div>
+          <VibeBanner tracks={data?.tracks||[]} artists={data?.artists||[]}/>
 
           {topTracks.length > 0 && (
             <div className="tracks-section">
@@ -468,7 +500,7 @@ function App() {
     const params = new URLSearchParams(window.location.search);
     const code = params.get('code');
     const err = params.get('error');
-    setDebug(code ? 'Got callback code, exchanging...' : err ? 'Spotify error: '+err : 'Ready — waiting for login');
+    setDebug(code ? 'Got callback, exchanging token...' : err ? 'Spotify error: '+err : 'Ready');
     if (err) { setError('Login cancelled: ' + err); window.history.replaceState({},'','/'); return; }
     if (code) {
       window.history.replaceState({},'','/');
