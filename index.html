@@ -62,69 +62,62 @@
     .hero-label { font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:16px; }
     .hero-img { width:72px;height:72px;border-radius:12px;object-fit:cover;margin-bottom:12px;box-shadow:0 8px 24px rgba(0,0,0,0.4); }
     .hero-img.circle { border-radius:50%; }
-    .hero-value { font-size:22px;font-weight:700;line-height:1.2;margin-bottom:4px; }
+    .hero-value { font-size:22px;font-weight:700;line-height:1.2;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
     .hero-meta { font-size:13px;color:var(--text-muted); }
     .section-title { font-size:13px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--text-dim);margin-bottom:20px;display:flex;align-items:center;gap:10px; }
     .section-title::after { content:'';flex:1;height:1px;background:var(--border); }
     .section-wrap { margin-bottom:48px; }
     .track-list { display:flex;flex-direction:column;gap:8px; }
-    .track-card { display:flex;align-items:center;gap:16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;cursor:pointer;transition:all 0.25s ease;animation:cardSlideIn 0.5s ease both;position:relative;overflow:hidden; }
+    .track-card { display:flex;align-items:center;gap:16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;cursor:pointer;transition:all 0.25s ease;position:relative;overflow:hidden; }
     .track-card:hover { border-color:rgba(29,185,84,0.3);transform:translateX(4px); }
     .track-card .badge { position:absolute;top:8px;right:10px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--accent2);font-family:var(--font-mono); }
-    .track-rank { font-family:var(--font-mono);font-size:13px;font-weight:700;color:var(--text-dim);min-width:28px; }
+    .track-rank { font-family:var(--font-mono);font-size:13px;font-weight:700;color:var(--text-dim);min-width:28px;flex-shrink:0; }
     .track-art { width:52px;height:52px;border-radius:8px;object-fit:cover;flex-shrink:0; }
     .track-info { flex:1;min-width:0; }
     .track-name { font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
-    .track-artist { font-size:13px;color:var(--text-muted);margin-top:3px; }
+    .track-artist { font-size:13px;color:var(--text-muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
     .track-meta { font-size:11px;color:var(--text-dim);margin-top:2px; }
-    .track-bar-wrap { width:80px;height:4px;background:var(--surface3);border-radius:2px;overflow:hidden;flex-shrink:0; }
+    .track-bar-wrap { width:60px;height:4px;background:var(--surface3);border-radius:2px;overflow:hidden;flex-shrink:0; }
     .track-bar { height:100%;background:var(--green);border-radius:2px; }
-
-    /* FIXED ARTIST GRID */
-    .artists-grid { display:grid;grid-template-columns:repeat(5,1fr);gap:12px; }
+    .artists-grid { display:grid;grid-template-columns:repeat(5,1fr);gap:12px;align-items:start; }
     @media(max-width:900px){.artists-grid{grid-template-columns:repeat(3,1fr);}}
     @media(max-width:500px){.artists-grid{grid-template-columns:repeat(2,1fr);}}
-    .artist-card { background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:20px 16px;text-align:center;cursor:pointer;transition:all 0.3s ease;animation:cardSlideIn 0.5s ease both;position:relative; }
+    .artist-card { background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:20px 16px;text-align:center;cursor:pointer;transition:all 0.3s ease;position:relative; }
     .artist-card:hover { border-color:rgba(29,185,84,0.4);transform:translateY(-6px);box-shadow:0 20px 40px rgba(0,0,0,0.4); }
     .artist-rank-badge { position:absolute;top:12px;left:12px;background:rgba(0,0,0,0.7);border:1px solid var(--border);font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--green);padding:3px 7px;border-radius:6px; }
     .artist-img { width:80px;height:80px;border-radius:50%;object-fit:cover;margin:0 auto 12px;border:2px solid var(--border);display:block;transition:border-color 0.3s; }
     .artist-card:hover .artist-img { border-color:var(--green); }
     .artist-name { font-size:14px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
-    .artist-genre { font-size:11px;color:var(--text-muted);margin-top:4px; }
-
-    /* FIXED ALBUM GRID — key fix: fixed image size, no aspect-ratio */
-    .albums-grid { display:grid;grid-template-columns:repeat(5,1fr);gap:12px; }
+    .artist-sub { font-size:11px;color:var(--text-muted);margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+    /* ALBUM GRID FIX: fixed pixel height image, no aspect-ratio, no padding tricks */
+    .albums-grid { display:grid;grid-template-columns:repeat(5,1fr);gap:12px;align-items:start; }
     @media(max-width:900px){.albums-grid{grid-template-columns:repeat(3,1fr);}}
     @media(max-width:500px){.albums-grid{grid-template-columns:repeat(2,1fr);}}
-    .album-card { background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:12px;cursor:pointer;transition:all 0.3s ease;animation:cardSlideIn 0.5s ease both;width:100%; }
+    .album-card { background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:12px;cursor:pointer;transition:all 0.3s ease; }
     .album-card:hover { border-color:rgba(29,185,84,0.4);transform:translateY(-4px);box-shadow:0 16px 32px rgba(0,0,0,0.4); }
-    .album-art { width:100%;height:0;padding-bottom:100%;border-radius:10px;object-fit:cover;margin-bottom:10px;display:block;position:relative; }
-    .album-art-wrap { width:100%;padding-bottom:100%;position:relative;border-radius:10px;overflow:hidden;margin-bottom:10px; }
-    .album-art-wrap img { position:absolute;inset:0;width:100%;height:100%;object-fit:cover; }
-    .album-name { font-size:13px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
-    .album-artist { font-size:11px;color:var(--text-muted);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+    .album-img { width:100%;height:auto;display:block;border-radius:8px;aspect-ratio:1/1;object-fit:cover;margin-bottom:10px; }
+    .album-name { font-size:12px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:3px; }
+    .album-artist { font-size:11px;color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
     .album-year { font-size:11px;color:var(--text-dim);margin-top:2px;font-family:var(--font-mono); }
-
     .btn-more { display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:16px;background:var(--surface2);border:1px solid var(--border);color:var(--text-muted);font-family:var(--font-display);font-size:13px;font-weight:600;padding:12px;border-radius:12px;cursor:pointer;transition:all 0.2s; }
     .btn-more:hover { border-color:var(--green);color:var(--green); }
-
     .vibe-banner { background:linear-gradient(135deg,var(--surface),var(--surface2));border:1px solid var(--border);border-radius:24px;padding:36px 40px;display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:48px;flex-wrap:wrap;gap:24px;position:relative;overflow:hidden; }
     .vibe-banner::before { content:'';position:absolute;top:-60px;right:-60px;width:240px;height:240px;background:radial-gradient(circle,rgba(29,185,84,0.15) 0%,transparent 70%);border-radius:50%; }
+    .vibe-left { flex:1;min-width:200px;position:relative;z-index:1; }
     .vibe-eyebrow { font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--green);margin-bottom:8px; }
     .vibe-value { font-size:clamp(28px,5vw,52px);font-weight:900;letter-spacing:-2px;line-height:1; }
-    .vibe-desc { font-size:14px;color:var(--text-muted);margin-top:10px; }
+    .vibe-desc { font-size:14px;color:var(--text-muted);margin-top:8px; }
     .genre-tags { display:flex;gap:8px;flex-wrap:wrap;margin-top:12px; }
     .genre-tag { background:rgba(29,185,84,0.12);border:1px solid rgba(29,185,84,0.25);color:var(--green);font-size:12px;font-weight:600;padding:6px 14px;border-radius:100px; }
-    .decade-bars { display:flex;flex-direction:column;gap:10px;min-width:200px; }
+    .decade-bars { display:flex;flex-direction:column;gap:10px;min-width:180px;position:relative;z-index:1; }
     .decade-row { display:flex;align-items:center;gap:12px; }
     .decade-label { font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--text-muted);min-width:40px; }
     .decade-bar-wrap { flex:1;height:6px;background:var(--surface3);border-radius:3px;overflow:hidden; }
-    .decade-bar { height:100%;background:var(--green);border-radius:3px;transition:width 1s ease; }
+    .decade-bar { height:100%;background:var(--green);border-radius:3px; }
     .decade-count { font-family:var(--font-mono);font-size:11px;color:var(--text-dim);min-width:20px;text-align:right; }
-
     .stats-row { display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:48px; }
     @media(max-width:600px){.stats-row{grid-template-columns:1fr;}}
-    .stat-block { background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:24px;animation:cardSlideIn 0.5s ease both; }
+    .stat-block { background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:24px; }
     .stat-icon { font-size:28px;margin-bottom:12px;display:block; }
     .stat-number { font-size:36px;font-weight:900;letter-spacing:-2px;color:var(--green); }
     .stat-label { font-size:13px;color:var(--text-muted);margin-top:4px; }
@@ -148,7 +141,7 @@
     .empty-state p { font-size:15px;color:var(--text-muted);max-width:400px;margin:0 auto 32px; }
     .copied-toast { position:fixed;bottom:60px;left:50%;transform:translateX(-50%);background:var(--green);color:var(--black);font-weight:700;font-size:14px;padding:12px 28px;border-radius:100px;animation:toastIn 2.5s ease forwards;pointer-events:none;z-index:10000; }
     .rank-1{color:var(--accent2);} .rank-2{color:#c0c0c0;} .rank-3{color:#cd7f32;} .rank-other{color:var(--text-dim);}
-    .debug-bar { position:fixed;bottom:0;left:0;right:0;background:#111;border-top:1px solid #333;padding:8px 16px;font-family:monospace;font-size:12px;color:#1DB954;z-index:99999; }
+    .debug-bar { position:fixed;bottom:0;left:0;right:0;background:#111;border-top:1px solid #333;padding:8px 16px;font-family:monospace;font-size:12px;color:#1DB954;z-index:99999;overflow:hidden;white-space:nowrap;text-overflow:ellipsis; }
   </style>
 </head>
 <body>
@@ -171,149 +164,125 @@ function setDebug(msg) {
 function generateCodeVerifier(length=128) {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
   let result = '';
-  const rv = crypto.getRandomValues(new Uint8Array(length));
-  rv.forEach(v => { result += chars[v % chars.length]; });
+  crypto.getRandomValues(new Uint8Array(length)).forEach(v => { result += chars[v%chars.length]; });
   return result;
 }
-
 async function generateCodeChallenge(verifier) {
-  const data = new TextEncoder().encode(verifier);
-  const digest = await crypto.subtle.digest('SHA-256', data);
-  return btoa(String.fromCharCode(...new Uint8Array(digest)))
-    .replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier));
+  return btoa(String.fromCharCode(...new Uint8Array(digest))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
 }
-
 async function initiateLogin() {
-  setDebug('Starting login...');
   const verifier = generateCodeVerifier();
-  const challenge = await generateCodeChallenge(verifier);
   localStorage.setItem('pkce_verifier', verifier);
   const params = new URLSearchParams({
     client_id:CLIENT_ID, response_type:'code', redirect_uri:REDIRECT_URI,
-    code_challenge_method:'S256', code_challenge:challenge, scope:SCOPES, show_dialog:'true',
+    code_challenge_method:'S256', code_challenge:await generateCodeChallenge(verifier),
+    scope:SCOPES, show_dialog:'true',
   });
   window.location.href = `https://accounts.spotify.com/authorize?${params}`;
 }
-
 async function exchangeToken(code) {
-  setDebug('Exchanging token...');
   const verifier = localStorage.getItem('pkce_verifier');
-  if (!verifier) throw new Error('No PKCE verifier found — try logging in again');
-  const body = new URLSearchParams({
-    client_id:CLIENT_ID, grant_type:'authorization_code',
-    code, redirect_uri:REDIRECT_URI, code_verifier:verifier,
+  if (!verifier) throw new Error('No PKCE verifier');
+  const res = await fetch('https://accounts.spotify.com/api/token', {
+    method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    body: new URLSearchParams({client_id:CLIENT_ID,grant_type:'authorization_code',code,redirect_uri:REDIRECT_URI,code_verifier:verifier}),
   });
-  const response = await fetch('https://accounts.spotify.com/api/token', {
-    method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body,
-  });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.error_description || data.error || 'Token exchange failed');
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error_description||data.error||'Token failed');
   localStorage.removeItem('pkce_verifier');
-  setDebug('Token OK — loading data...');
   return data;
 }
 
 async function fetchAllData(token, timeRange) {
-  setDebug('Fetching ' + timeRange + ' data...');
-  const headers = { Authorization: `Bearer ${token}` };
-  const safeGet = async (url) => {
+  setDebug('Fetching ' + timeRange + '...');
+  const h = { Authorization: `Bearer ${token}` };
+  const get = async (url) => {
     try {
-      const res = await fetch(url, { headers });
-      if (!res.ok) { setDebug('API error ' + res.status + ' ' + url); return null; }
-      return await res.json();
-    } catch(e) { setDebug('Fetch failed: ' + e.message); return null; }
+      const r = await fetch(url, {headers:h});
+      if (!r.ok) return null;
+      return await r.json();
+    } catch(e) { return null; }
   };
 
   const [tracksData, artistsData, profileData, recentData] = await Promise.all([
-    safeGet(`https://api.spotify.com/v1/me/top/tracks?limit=50&time_range=${timeRange}`),
-    safeGet(`https://api.spotify.com/v1/me/top/artists?limit=50&time_range=${timeRange}`),
-    safeGet('https://api.spotify.com/v1/me'),
-    safeGet('https://api.spotify.com/v1/me/player/recently-played?limit=50'),
+    get(`https://api.spotify.com/v1/me/top/tracks?limit=50&time_range=${timeRange}`),
+    get(`https://api.spotify.com/v1/me/top/artists?limit=50&time_range=${timeRange}`),
+    get('https://api.spotify.com/v1/me'),
+    get('https://api.spotify.com/v1/me/player/recently-played?limit=50'),
   ]);
 
   const tracks = tracksData?.items || [];
   const artists = artistsData?.items || [];
-  const recentTracks = (recentData?.items || []).map(i => ({ ...i.track, played_at: i.played_at }));
+  const recentTracks = (recentData?.items||[]).map(i=>({...i.track, played_at:i.played_at}));
 
-  // build top albums from top tracks
+  // ── GENRES: collect artist IDs from tracks, then look up genres from artist list
+  // First try artists list directly
+  const genreMap = {};
+  artists.forEach(a => (a.genres||[]).forEach(g => { genreMap[g]=(genreMap[g]||0)+1; }));
+
+  // Also collect unique artist IDs from tracks that aren't in the artist list
+  const knownArtistIds = new Set(artists.map(a=>a.id));
+  const missingArtistIds = new Set();
+  tracks.forEach(t => (t.artists||[]).forEach(a => { if (!knownArtistIds.has(a.id)) missingArtistIds.add(a.id); }));
+
+  // Fetch genres for any missing artists in batches of 50
+  if (missingArtistIds.size > 0) {
+    const ids = [...missingArtistIds].slice(0,50).join(',');
+    const extra = await get(`https://api.spotify.com/v1/artists?ids=${ids}`);
+    (extra?.artists||[]).forEach(a => (a?.genres||[]).forEach(g => { genreMap[g]=(genreMap[g]||0)+1; }));
+  }
+
+  const genres = Object.entries(genreMap).sort((a,b)=>b[1]-a[1]).map(e=>e[0]);
+  setDebug(`${tracks.length} tracks · ${artists.length} artists · ${genres.length} genres found: ${genres.slice(0,3).join(', ')||'none'}`);
+
+  // ── ALBUMS: dedupe from tracks
   const albumMap = {};
   tracks.forEach(t => {
     const alb = t.album;
-    if (!alb) return;
-    if (!albumMap[alb.id]) albumMap[alb.id] = { ...alb, trackCount:0, artists:t.artists };
+    if (!alb?.id) return;
+    if (!albumMap[alb.id]) albumMap[alb.id] = { ...alb, trackCount:0 };
     albumMap[alb.id].trackCount++;
   });
-  const albums = Object.values(albumMap).sort((a,b) => b.trackCount - a.trackCount);
+  const albums = Object.values(albumMap).sort((a,b)=>b.trackCount-a.trackCount);
 
-  // log genre info for debugging
-  const genreList = [];
-  artists.forEach(a => (a.genres||[]).forEach(g => genreList.push(g)));
-  setDebug(`Got ${tracks.length} tracks, ${artists.length} artists, ${genreList.length} total genre tags`);
-
-  return { tracks, artists, albums, recentTracks, profile: profileData || {} };
+  return { tracks, artists, albums, recentTracks, genres, profile: profileData||{} };
 }
 
 function getTopDecade(tracks) {
-  const decades = {};
-  tracks.forEach(t => {
-    const year = parseInt((t.album?.release_date||'2000').slice(0,4));
-    const decade = Math.floor(year/10)*10;
-    decades[decade] = (decades[decade]||0)+1;
-  });
-  const sorted = Object.entries(decades).sort((a,b)=>b[1]-a[1]);
-  return sorted.length > 0 ? sorted[0][0]+'s' : null;
+  const d={};
+  tracks.forEach(t=>{const y=parseInt((t.album?.release_date||'2000').slice(0,4));const dec=Math.floor(y/10)*10;d[dec]=(d[dec]||0)+1;});
+  const s=Object.entries(d).sort((a,b)=>b[1]-a[1]);
+  return s.length>0?s[0][0]+'s':null;
 }
-
 function getDecadeBreakdown(tracks) {
-  const decades = {};
-  tracks.forEach(t => {
-    const year = parseInt((t.album?.release_date||'2000').slice(0,4));
-    const decade = Math.floor(year/10)*10;
-    decades[decade] = (decades[decade]||0)+1;
-  });
-  const sorted = Object.entries(decades).sort((a,b)=>b[1]-a[1]).slice(0,4);
-  const max = sorted[0]?.[1]||1;
-  return sorted.map(([d,c])=>({ decade:d+'s', count:c, pct:Math.round((c/max)*100) }));
+  const d={};
+  tracks.forEach(t=>{const y=parseInt((t.album?.release_date||'2000').slice(0,4));const dec=Math.floor(y/10)*10;d[dec]=(d[dec]||0)+1;});
+  const s=Object.entries(d).sort((a,b)=>b[1]-a[1]).slice(0,4);
+  const max=s[0]?.[1]||1;
+  return s.map(([dec,c])=>({decade:dec+'s',count:c,pct:Math.round((c/max)*100)}));
 }
-
-// Pass ALL artists in, not just top 5
-function getGenres(artists) {
-  const g = {};
-  artists.forEach(a => (a.genres||[]).forEach(x => { g[x]=(g[x]||0)+1; }));
-  return Object.entries(g).sort((a,b)=>b[1]-a[1]).map(e=>e[0]);
+function timeAgo(ds) {
+  const diff=Date.now()-new Date(ds).getTime();
+  const m=Math.floor(diff/60000);
+  if(m<1)return'just now';if(m<60)return m+'m ago';
+  const h=Math.floor(m/60);if(h<24)return h+'h ago';return Math.floor(h/24)+'d ago';
 }
+function rankClass(i){return['rank-1','rank-2','rank-3'][i]||'rank-other';}
 
-function timeAgo(dateStr) {
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const mins = Math.floor(diff/60000);
-  if (mins < 1) return 'just now';
-  if (mins < 60) return mins + 'm ago';
-  const hrs = Math.floor(mins/60);
-  if (hrs < 24) return hrs + 'h ago';
-  return Math.floor(hrs/24) + 'd ago';
-}
-
-function rankClass(i) { return ['rank-1','rank-2','rank-3'][i]||'rank-other'; }
-
-function LoadingScreen({ message='Loading…' }) {
-  return (
-    <div className="loading-screen">
-      <div className="loading-bars">{[1,2,3,4,5].map(i=><span key={i}/>)}</div>
-      <p className="loading-text">{message}</p>
-    </div>
-  );
+function LoadingScreen({message='Loading…'}) {
+  return <div className="loading-screen"><div className="loading-bars">{[1,2,3,4,5].map(i=><span key={i}/>)}</div><p className="loading-text">{message}</p></div>;
 }
 
 function LoginScreen() {
+  const spotPath = "M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z";
   return (
     <div className="login-screen">
-      <div className="logo-mark">
-        <svg viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
-      </div>
+      <div className="logo-mark"><svg viewBox="0 0 24 24"><path d={spotPath}/></svg></div>
       <h1 className="login-title">Forever<br/><span>Wrapped</span></h1>
       <p className="login-subtitle">Your Spotify listening history, beautifully visualized — for any time period, any time.</p>
       <button className="btn-login" onClick={initiateLogin}>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d={spotPath}/></svg>
         Connect with Spotify
       </button>
       <div className="login-features">
@@ -325,7 +294,7 @@ function LoginScreen() {
   );
 }
 
-function TimeSelector({ value, onChange }) {
+function TimeSelector({value,onChange}) {
   return (
     <div className="time-selector">
       {[['short_term','Last 4 Weeks'],['medium_term','Last 6 Months'],['long_term','All Time']].map(([v,l])=>(
@@ -335,9 +304,9 @@ function TimeSelector({ value, onChange }) {
   );
 }
 
-function TrackRow({ track, index, showTime }) {
+function TrackRow({track, index, showTime}) {
   return (
-    <div className="track-card" style={{animationDelay:`${index*0.04}s`}} onClick={()=>window.open(track.external_urls?.spotify,'_blank')}>
+    <div className="track-card" onClick={()=>window.open(track.external_urls?.spotify,'_blank')}>
       <span className={`track-rank ${rankClass(index)}`}>#{index+1}</span>
       <img className="track-art" src={track.album?.images?.[0]?.url||''} alt={track.name} onError={e=>{e.target.src='https://via.placeholder.com/52/222/555?text=♪';}}/>
       <div className="track-info">
@@ -346,29 +315,27 @@ function TrackRow({ track, index, showTime }) {
         {showTime && track.played_at && <div className="track-meta">{timeAgo(track.played_at)}</div>}
       </div>
       {!showTime && <div className="track-bar-wrap"><div className="track-bar" style={{width:`${track.popularity||60}%`}}/></div>}
-      {showTime && track.played_at && <span className="badge">RECENT</span>}
+      {showTime && <span className="badge">RECENT</span>}
     </div>
   );
 }
 
-function ArtistCard({ artist, index }) {
+function ArtistCard({artist, index}) {
   return (
-    <div className="artist-card" style={{animationDelay:`${index*0.04}s`}} onClick={()=>window.open(artist.external_urls?.spotify,'_blank')}>
+    <div className="artist-card" onClick={()=>window.open(artist.external_urls?.spotify,'_blank')}>
       <span className="artist-rank-badge">#{index+1}</span>
       <img className="artist-img" src={artist.images?.[0]?.url||''} alt={artist.name} onError={e=>{e.target.src='https://via.placeholder.com/80/222/555?text=♪';}}/>
       <div className="artist-name">{artist.name}</div>
-      <div className="artist-genre">{(artist.genres||[])[0]||'Artist'}</div>
+      <div className="artist-sub">{(artist.genres||[])[0]||'Artist'}</div>
     </div>
   );
 }
 
-function AlbumCard({ album, index }) {
-  const year = (album.release_date||'').slice(0,4);
+function AlbumCard({album, index}) {
+  const year=(album.release_date||'').slice(0,4);
   return (
-    <div className="album-card" style={{animationDelay:`${index*0.04}s`}} onClick={()=>window.open(album.external_urls?.spotify,'_blank')}>
-      <div className="album-art-wrap">
-        <img src={album.images?.[0]?.url||''} alt={album.name} onError={e=>{e.target.src='https://via.placeholder.com/200/222/555?text=♪';}}/>
-      </div>
+    <div className="album-card" onClick={()=>window.open(album.external_urls?.spotify,'_blank')}>
+      <img className="album-img" src={album.images?.[0]?.url||''} alt={album.name} onError={e=>{e.target.src='https://via.placeholder.com/200/222/555?text=♪';}}/>
       <div className="album-name">{album.name}</div>
       <div className="album-artist">{(album.artists||[]).map(a=>a.name).join(', ')}</div>
       {year && <div className="album-year">{year}</div>}
@@ -376,56 +343,44 @@ function AlbumCard({ album, index }) {
   );
 }
 
-function ShowMoreSection({ title, items, renderItem, initialCount=5, step=5, gridClass }) {
+function ShowMoreSection({title, items, renderItem, initialCount=5, step=5, gridClass}) {
   const [visible, setVisible] = useState(initialCount);
-  // reset when items change (time range switch)
-  useEffect(() => { setVisible(initialCount); }, [items]);
+  useEffect(()=>{ setVisible(initialCount); }, [items, initialCount]);
   const shown = items.slice(0, visible);
   const remaining = items.length - visible;
   return (
     <div className="section-wrap">
       <div className="section-title">{title}</div>
-      {gridClass ? (
-        <div className={gridClass}>
-          {shown.map((item,i) => renderItem(item, i))}
-        </div>
-      ) : (
-        <div className="track-list">
-          {shown.map((item,i) => renderItem(item, i))}
-        </div>
-      )}
+      {gridClass
+        ? <div className={gridClass}>{shown.map((item,i)=>renderItem(item,i))}</div>
+        : <div className="track-list">{shown.map((item,i)=>renderItem(item,i))}</div>
+      }
       {remaining > 0 && (
-        <button className="btn-more" onClick={()=>setVisible(v=>Math.min(v+step, items.length))}>
-          + Show {Math.min(step, remaining)} more
+        <button className="btn-more" onClick={()=>setVisible(v=>Math.min(v+step,items.length))}>
+          + Show {Math.min(step,remaining)} more
         </button>
       )}
     </div>
   );
 }
 
-function VibeBanner({ tracks, artists }) {
+function VibeBanner({tracks, genres}) {
   const topDecade = getTopDecade(tracks);
   const decadeBreakdown = getDecadeBreakdown(tracks);
-  // use ALL artists passed in for genre detection
-  const genres = getGenres(artists).slice(0,6);
-
+  const topGenres = genres.slice(0,6);
   return (
     <div className="vibe-banner">
-      <div style={{flex:1,minWidth:200}}>
+      <div className="vibe-left">
         <div className="vibe-eyebrow">Your Music Era</div>
         <div className="vibe-value">{topDecade||'Mixed'}</div>
         <div className="vibe-desc">Based on your top track release years</div>
-        {genres.length > 0 ? (
+        {topGenres.length > 0 ? (
           <>
             <div className="vibe-eyebrow" style={{marginTop:16}}>Top Genres</div>
-            <div className="genre-tags">
-              {genres.map(g=><span className="genre-tag" key={g}>{g}</span>)}
-            </div>
+            <div className="genre-tags">{topGenres.map(g=><span className="genre-tag" key={g}>{g}</span>)}</div>
           </>
         ) : (
-          <div className="vibe-desc" style={{marginTop:12,opacity:0.6,fontStyle:'italic'}}>
-            Genres not available for your top artists
-          </div>
+          <div className="vibe-desc" style={{marginTop:10,fontStyle:'italic',opacity:0.6}}>Genre data unavailable</div>
         )}
       </div>
       {decadeBreakdown.length > 0 && (
@@ -443,7 +398,7 @@ function VibeBanner({ tracks, artists }) {
   );
 }
 
-function Dashboard({ token, onLogout }) {
+function Dashboard({token, onLogout}) {
   const [timeRange, setTimeRange] = useState('medium_term');
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -453,46 +408,39 @@ function Dashboard({ token, onLogout }) {
   const load = useCallback(async () => {
     setLoading(true); setError(null); setData(null);
     try {
-      const result = await fetchAllData(token, timeRange);
-      setData(result);
+      setData(await fetchAllData(token, timeRange));
     } catch(e) {
-      setDebug('Error: ' + e.message);
-      if (e.message === 'TOKEN_EXPIRED') onLogout();
+      if (e.message==='TOKEN_EXPIRED') onLogout();
       else setError(e.message);
     } finally { setLoading(false); }
   }, [token, timeRange]);
 
   useEffect(()=>{ load(); }, [load]);
-
   if (loading) return <LoadingScreen message="Fetching your music data…"/>;
 
-  const topTracks = data?.tracks||[];
-  const topArtists = data?.artists||[];
-  const topAlbums = data?.albums||[];
-  const recentTracks = data?.recentTracks||[];
+  const tracks = data?.tracks||[];
+  const artists = data?.artists||[];
+  const albums = data?.albums||[];
+  const recent = data?.recentTracks||[];
+  const genres = data?.genres||[];
   const profile = data?.profile||{};
+  const hasData = tracks.length>0||artists.length>0;
+  const topDecade = getTopDecade(tracks);
   const timeLabel = {short_term:'Last 4 Weeks',medium_term:'Last 6 Months',long_term:'All Time'}[timeRange];
-  const hasData = topTracks.length > 0 || topArtists.length > 0;
-  const topDecade = getTopDecade(topTracks);
-  const genres = getGenres(topArtists);
 
   const handleShare = () => {
-    const text = `🎵 My Forever Wrapped:\n#1 Track: ${topTracks[0]?.name||'?'}\n#1 Artist: ${topArtists[0]?.name||'?'}\nTop Genre: ${genres[0]||'N/A'}\nTop Era: ${topDecade||'Mixed'}\n\nforever-wrapped.onrender.com`;
-    navigator.clipboard.writeText(text).then(()=>{ setShowCopied(true); setTimeout(()=>setShowCopied(false),2600); });
+    const text = `🎵 My Forever Wrapped:\n#1 Track: ${tracks[0]?.name||'?'}\n#1 Artist: ${artists[0]?.name||'?'}\nTop Genre: ${genres[0]||'N/A'}\nTop Era: ${topDecade||'Mixed'}\n\nforever-wrapped.onrender.com`;
+    navigator.clipboard.writeText(text).then(()=>{setShowCopied(true);setTimeout(()=>setShowCopied(false),2600);});
   };
-
   const tweetShare = () => {
-    const text = encodeURIComponent(`🎵 My #ForeverWrapped: Top Artist is ${topArtists[0]?.name||'?'} — stuck in the ${topDecade||'past'} listening to ${genres[0]||'good music'} 🎶`);
+    const text = encodeURIComponent(`🎵 My #ForeverWrapped: Top Artist is ${artists[0]?.name||'?'} — listening to ${genres[0]||'good music'} in the ${topDecade||'past'} 🎶`);
     window.open(`https://twitter.com/intent/tweet?text=${text}`,'_blank');
   };
 
   return (
     <div className="dashboard">
       <div className="dash-header">
-        <div className="dash-brand">
-          <div className="dash-brand-dot"/>
-          <div className="dash-brand-name">Forever<span>Wrapped</span></div>
-        </div>
+        <div className="dash-brand"><div className="dash-brand-dot"/><div className="dash-brand-name">Forever<span>Wrapped</span></div></div>
         <div style={{display:'flex',alignItems:'center',gap:12,flexWrap:'wrap'}}>
           {profile.display_name && (
             <div className="user-pill">
@@ -506,12 +454,7 @@ function Dashboard({ token, onLogout }) {
 
       <TimeSelector value={timeRange} onChange={setTimeRange}/>
 
-      {error && (
-        <div className="error-card">
-          ⚠️ {error}
-          <button onClick={load} style={{background:'none',border:'none',color:'inherit',cursor:'pointer',textDecoration:'underline',marginLeft:8}}>Retry</button>
-        </div>
-      )}
+      {error && <div className="error-card">⚠️ {error} <button onClick={load} style={{background:'none',border:'none',color:'inherit',cursor:'pointer',textDecoration:'underline',marginLeft:8}}>Retry</button></div>}
 
       {!error && !hasData && (
         <div className="empty-state">
@@ -531,65 +474,50 @@ function Dashboard({ token, onLogout }) {
           <div className="hero-section">
             <div className="hero-card">
               <div className="hero-label">🎵 Top Track</div>
-              {topTracks[0] && <>
-                <img className="hero-img" src={topTracks[0].album?.images?.[0]?.url||''} alt={topTracks[0].name} onError={e=>{e.target.src='https://via.placeholder.com/72/222/555?text=♪';}}/>
-                <div className="hero-value">{topTracks[0].name}</div>
-                <div className="hero-meta">{(topTracks[0].artists||[]).map(a=>a.name).join(', ')}</div>
+              {tracks[0] && <>
+                <img className="hero-img" src={tracks[0].album?.images?.[0]?.url||''} alt={tracks[0].name} onError={e=>{e.target.src='https://via.placeholder.com/72/222/555?text=♪';}}/>
+                <div className="hero-value">{tracks[0].name}</div>
+                <div className="hero-meta">{(tracks[0].artists||[]).map(a=>a.name).join(', ')}</div>
               </>}
             </div>
             <div className="hero-card">
               <div className="hero-label">🎤 Top Artist</div>
-              {topArtists[0] && <>
-                <img className="hero-img circle" src={topArtists[0].images?.[0]?.url||''} alt={topArtists[0].name} onError={e=>{e.target.src='https://via.placeholder.com/72/222/555?text=♪';}}/>
-                <div className="hero-value">{topArtists[0].name}</div>
-                <div className="hero-meta">{genres[0] || (topArtists[0].genres||[])[0] || 'Artist'}</div>
+              {artists[0] && <>
+                <img className="hero-img circle" src={artists[0].images?.[0]?.url||''} alt={artists[0].name} onError={e=>{e.target.src='https://via.placeholder.com/72/222/555?text=♪';}}/>
+                <div className="hero-value">{artists[0].name}</div>
+                <div className="hero-meta">{genres[0]||'Artist'}</div>
               </>}
             </div>
             <div className="hero-card">
               <div className="hero-label">💿 Top Album</div>
-              {topAlbums[0] && <>
-                <img className="hero-img" src={topAlbums[0].images?.[0]?.url||''} alt={topAlbums[0].name} onError={e=>{e.target.src='https://via.placeholder.com/72/222/555?text=♪';}}/>
-                <div className="hero-value">{topAlbums[0].name}</div>
-                <div className="hero-meta">{(topAlbums[0].artists||[]).map(a=>a.name).join(', ')}</div>
+              {albums[0] && <>
+                <img className="hero-img" src={albums[0].images?.[0]?.url||''} alt={albums[0].name} onError={e=>{e.target.src='https://via.placeholder.com/72/222/555?text=♪';}}/>
+                <div className="hero-value">{albums[0].name}</div>
+                <div className="hero-meta">{(albums[0].artists||[]).map(a=>a.name).join(', ')}</div>
               </>}
             </div>
           </div>
 
           <div className="stats-row">
-            <div className="stat-block"><span className="stat-icon">🎵</span><div className="stat-number">{topTracks.length}</div><div className="stat-label">Top tracks</div></div>
-            <div className="stat-block"><span className="stat-icon">🎤</span><div className="stat-number">{topArtists.length}</div><div className="stat-label">Top artists</div></div>
+            <div className="stat-block"><span className="stat-icon">🎵</span><div className="stat-number">{tracks.length}</div><div className="stat-label">Top tracks</div></div>
+            <div className="stat-block"><span className="stat-icon">🎤</span><div className="stat-number">{artists.length}</div><div className="stat-label">Top artists</div></div>
             <div className="stat-block"><span className="stat-icon">📅</span><div className="stat-number">{topDecade||'—'}</div><div className="stat-label">Your top era</div></div>
           </div>
 
-          <VibeBanner tracks={topTracks} artists={topArtists}/>
+          <VibeBanner tracks={tracks} genres={genres}/>
 
-          <ShowMoreSection
-            title="Top Tracks"
-            items={topTracks}
-            initialCount={5} step={5}
-            renderItem={(t,i)=><TrackRow key={t.id} track={t} index={i} showTime={false}/>}
-          />
-          <ShowMoreSection
-            title="Top Artists"
-            items={topArtists}
-            initialCount={5} step={5}
-            gridClass="artists-grid"
-            renderItem={(a,i)=><ArtistCard key={a.id} artist={a} index={i}/>}
-          />
-          <ShowMoreSection
-            title="Top Albums"
-            items={topAlbums}
-            initialCount={5} step={5}
-            gridClass="albums-grid"
-            renderItem={(a,i)=><AlbumCard key={a.id} album={a} index={i}/>}
-          />
-          {recentTracks.length > 0 && (
-            <ShowMoreSection
-              title="Recently Played"
-              items={recentTracks}
-              initialCount={5} step={5}
-              renderItem={(t,i)=><TrackRow key={t.id+'-'+i} track={t} index={i} showTime={true}/>}
-            />
+          <ShowMoreSection title="Top Tracks" items={tracks} initialCount={5} step={5}
+            renderItem={(t,i)=><TrackRow key={t.id} track={t} index={i} showTime={false}/>}/>
+
+          <ShowMoreSection title="Top Artists" items={artists} initialCount={5} step={5} gridClass="artists-grid"
+            renderItem={(a,i)=><ArtistCard key={a.id} artist={a} index={i}/>}/>
+
+          <ShowMoreSection title="Top Albums" items={albums} initialCount={5} step={5} gridClass="albums-grid"
+            renderItem={(a,i)=><AlbumCard key={a.id} album={a} index={i}/>}/>
+
+          {recent.length>0 && (
+            <ShowMoreSection title="Recently Played" items={recent} initialCount={5} step={5}
+              renderItem={(t,i)=><TrackRow key={t.id+'-'+i} track={t} index={i} showTime={true}/>}/>
           )}
 
           <div className="share-section">
@@ -618,14 +546,14 @@ function App() {
     const params = new URLSearchParams(window.location.search);
     const code = params.get('code');
     const err = params.get('error');
-    setDebug(code ? 'Got callback, exchanging token...' : err ? 'Spotify error: '+err : 'Ready');
+    setDebug(code?'Got callback...':err?'Error: '+err:'Ready');
     if (err) { setError('Login cancelled: '+err); window.history.replaceState({},'','/'); return; }
     if (code) {
       window.history.replaceState({},'','/');
       setLoading(true);
       exchangeToken(code)
-        .then(data=>{ sessionStorage.setItem('spotify_token',data.access_token); setToken(data.access_token); })
-        .catch(e=>{ setDebug('Token error: '+e.message); setError(e.message); })
+        .then(d=>{ sessionStorage.setItem('spotify_token',d.access_token); setToken(d.access_token); })
+        .catch(e=>{ setDebug('Error: '+e.message); setError(e.message); })
         .finally(()=>setLoading(false));
     }
   },[]);
@@ -637,11 +565,11 @@ function App() {
       {error && !loading && (
         <div className="login-screen">
           <div className="error-card" style={{maxWidth:440}}>⚠️ {error}</div>
-          <button className="btn-login" style={{marginTop:24}} onClick={()=>{ setError(null); localStorage.clear(); }}>Try Again</button>
+          <button className="btn-login" style={{marginTop:24}} onClick={()=>{setError(null);localStorage.clear();}}>Try Again</button>
         </div>
       )}
       {!loading && !error && !token && <LoginScreen/>}
-      {!loading && !error && token && <Dashboard token={token} onLogout={()=>{ sessionStorage.removeItem('spotify_token'); setToken(null); }}/>}
+      {!loading && !error && token && <Dashboard token={token} onLogout={()=>{sessionStorage.removeItem('spotify_token');setToken(null);}}/>}
       <div id="debug-bar" className="debug-bar">🎵 Ready</div>
     </div>
   );
