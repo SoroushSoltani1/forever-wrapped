@@ -82,24 +82,30 @@
     .artists-grid { display:grid;grid-template-columns:repeat(5,1fr);gap:12px;align-items:start; }
     @media(max-width:900px){.artists-grid{grid-template-columns:repeat(3,1fr);}}
     @media(max-width:500px){.artists-grid{grid-template-columns:repeat(2,1fr);}}
-    .artist-card { background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:20px 16px;text-align:center;cursor:pointer;transition:all 0.3s ease;position:relative;height:fit-content; }
+    .artist-card { background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:20px 16px;text-align:center;cursor:pointer;transition:all 0.3s ease;position:relative;align-self:start; }
     .artist-card:hover { border-color:rgba(29,185,84,0.4);transform:translateY(-6px);box-shadow:0 20px 40px rgba(0,0,0,0.4); }
     .artist-rank-badge { position:absolute;top:12px;left:12px;background:rgba(0,0,0,0.7);border:1px solid var(--border);font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--green);padding:3px 7px;border-radius:6px; }
     .artist-img { width:80px;height:80px;border-radius:50%;object-fit:cover;margin:0 auto 12px;border:2px solid var(--border);display:block;transition:border-color 0.3s; }
     .artist-card:hover .artist-img { border-color:var(--green); }
     .artist-name { font-size:14px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
     .artist-sub { font-size:11px;color:var(--text-muted);margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
-    /* ALBUM FIX: fixed 160px image, cards never stretch */
-    .albums-grid { display:grid;grid-template-columns:repeat(5,1fr);gap:12px;align-items:start; }
-    @media(max-width:900px){.albums-grid{grid-template-columns:repeat(3,1fr);}}
-    @media(max-width:500px){.albums-grid{grid-template-columns:repeat(2,1fr);}}
-    .album-card { background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:12px;cursor:pointer;transition:all 0.3s ease;height:fit-content; }
+
+    /* ── ALBUMS: flexbox wrap so each card is independent, never stretched ── */
+    .albums-flex { display:flex;flex-wrap:wrap;gap:12px; }
+    .album-card {
+      background:var(--surface);border:1px solid var(--border);border-radius:16px;
+      padding:12px;cursor:pointer;transition:all 0.3s ease;
+      width:calc(20% - 10px);
+      flex-shrink:0;flex-grow:0;
+    }
+    @media(max-width:900px){ .album-card { width:calc(33.333% - 8px); } }
+    @media(max-width:500px){ .album-card { width:calc(50% - 6px); } }
     .album-card:hover { border-color:rgba(29,185,84,0.4);transform:translateY(-4px);box-shadow:0 16px 32px rgba(0,0,0,0.4); }
-    .album-img-wrap { width:100%;overflow:hidden;border-radius:8px;margin-bottom:10px;background:var(--surface3); }
-    .album-img-wrap img { width:100%;height:auto;display:block;aspect-ratio:1/1;object-fit:cover; }
+    .album-img { width:100%;display:block;border-radius:8px;aspect-ratio:1/1;object-fit:cover;margin-bottom:10px; }
     .album-name { font-size:12px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:3px; }
     .album-artist { font-size:11px;color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
     .album-year { font-size:11px;color:var(--text-dim);margin-top:2px;font-family:var(--font-mono); }
+
     .btn-more { display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:16px;background:var(--surface2);border:1px solid var(--border);color:var(--text-muted);font-family:var(--font-display);font-size:13px;font-weight:600;padding:12px;border-radius:12px;cursor:pointer;transition:all 0.2s; }
     .btn-more:hover { border-color:var(--green);color:var(--green); }
     .vibe-banner { background:linear-gradient(135deg,var(--surface),var(--surface2));border:1px solid var(--border);border-radius:24px;padding:36px 40px;display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:48px;flex-wrap:wrap;gap:24px;position:relative;overflow:hidden; }
@@ -156,238 +162,135 @@ const CLIENT_ID = '00f4d8a8c2634a6eb78c5b995349e9e3';
 const REDIRECT_URI = 'https://forever-wrapped.onrender.com/callback';
 const SCOPES = 'user-top-read user-read-private user-read-email user-read-recently-played';
 
-// ── ARTIST → GENRE MAP (covers most popular artists) ──
 const ARTIST_GENRE_MAP = {
-  // Hip-Hop / Rap
-  'kanye west': ['hip-hop','rap','chicago rap'],
-  'drake': ['hip-hop','rap','r&b'],
-  'j. cole': ['hip-hop','rap','conscious hip-hop'],
-  'j cole': ['hip-hop','rap','conscious hip-hop'],
-  'westside gunn': ['hip-hop','rap','griselda'],
-  'feature': ['hip-hop','rap'],
-  'kendrick lamar': ['hip-hop','rap','west coast rap'],
-  'travis scott': ['hip-hop','rap','trap'],
-  'playboi carti': ['hip-hop','rap','trap'],
-  'lil uzi vert': ['hip-hop','rap','trap'],
-  'future': ['hip-hop','trap','rap'],
-  'young thug': ['hip-hop','trap','rap'],
-  '21 savage': ['hip-hop','trap','rap'],
-  'metro boomin': ['hip-hop','trap','rap'],
-  'gunna': ['hip-hop','trap','rap'],
-  'lil baby': ['hip-hop','trap','rap'],
-  'nba youngboy': ['hip-hop','rap','trap'],
-  'polo g': ['hip-hop','rap','drill'],
-  'juice wrld': ['hip-hop','emo rap','trap'],
-  'xxxtentacion': ['hip-hop','emo rap','trap'],
-  'post malone': ['hip-hop','pop rap','trap'],
-  'eminem': ['hip-hop','rap','detroit rap'],
-  'nas': ['hip-hop','rap','east coast rap'],
-  'jay-z': ['hip-hop','rap','east coast rap'],
-  'jay z': ['hip-hop','rap','east coast rap'],
-  'lil wayne': ['hip-hop','rap','new orleans rap'],
-  'nicki minaj': ['hip-hop','rap','pop rap'],
-  'cardi b': ['hip-hop','rap','trap'],
-  'megan thee stallion': ['hip-hop','rap','trap'],
-  'a$ap rocky': ['hip-hop','rap','trap'],
-  'asap rocky': ['hip-hop','rap','trap'],
-  'tyler the creator': ['hip-hop','rap','alternative hip-hop'],
-  'tyler, the creator': ['hip-hop','rap','alternative hip-hop'],
-  'earl sweatshirt': ['hip-hop','rap','alternative hip-hop'],
-  'vince staples': ['hip-hop','rap','west coast rap'],
-  'schoolboy q': ['hip-hop','rap','west coast rap'],
-  'freddie gibbs': ['hip-hop','rap','gangsta rap'],
-  'conway the machine': ['hip-hop','rap','griselda'],
-  'benny the butcher': ['hip-hop','rap','griselda'],
-  'pusha t': ['hip-hop','rap','east coast rap'],
-  'rick ross': ['hip-hop','rap','trap'],
-  'meek mill': ['hip-hop','rap','philadelphia rap'],
-  'wale': ['hip-hop','rap'],
-  'big sean': ['hip-hop','rap','detroit rap'],
-  'chance the rapper': ['hip-hop','rap','gospel rap'],
-  'childish gambino': ['hip-hop','rap','r&b'],
-  'logic': ['hip-hop','rap','conscious hip-hop'],
-  'mac miller': ['hip-hop','rap','alternative hip-hop'],
-  'joey bada$$': ['hip-hop','rap','boom bap'],
-  'joey badass': ['hip-hop','rap','boom bap'],
-  'denzel curry': ['hip-hop','rap','florida rap'],
-  'flatbush zombies': ['hip-hop','rap','alternative hip-hop'],
-  'flatbush': ['hip-hop','rap'],
-  'larry june': ['hip-hop','rap','west coast rap'],
-  'don toliver': ['hip-hop','r&b','trap'],
-  'rod wave': ['hip-hop','r&b','trap soul'],
-  'summer walker': ['r&b','soul','trap soul'],
-  'the weeknd': ['r&b','pop','dark r&b'],
-  'frank ocean': ['r&b','neo soul','alternative r&b'],
-  'sza': ['r&b','neo soul','alternative r&b'],
-  'h.e.r.': ['r&b','soul'],
-  'khalid': ['r&b','pop','indie pop'],
-  '6lack': ['r&b','trap soul'],
-  'bryson tiller': ['r&b','trap soul'],
-  'partynextdoor': ['r&b','trap soul'],
-  'partynextdoor (pnd)': ['r&b','trap soul'],
-  // Pop
-  'taylor swift': ['pop','country pop'],
-  'ariana grande': ['pop','r&b'],
-  'billie eilish': ['pop','indie pop','dark pop'],
-  'olivia rodrigo': ['pop','pop rock'],
-  'dua lipa': ['pop','dance pop'],
-  'harry styles': ['pop','rock'],
-  'the 1975': ['pop rock','indie pop'],
-  'lana del rey': ['pop','indie pop','dream pop'],
-  'doja cat': ['pop','hip-hop','r&b'],
-  'lizzo': ['pop','r&b','soul'],
-  'bad bunny': ['latin trap','reggaeton','latin pop'],
-  'j balvin': ['reggaeton','latin pop'],
-  'ozuna': ['reggaeton','latin pop'],
-  // Rock / Alternative
-  'arctic monkeys': ['rock','indie rock','alternative'],
-  'radiohead': ['rock','alternative','art rock'],
-  'tame impala': ['psychedelic pop','indie rock','alternative'],
-  'foo fighters': ['rock','alternative rock','grunge'],
-  'red hot chili peppers': ['rock','alternative rock','funk rock'],
-  'nirvana': ['grunge','rock','alternative rock'],
-  'pearl jam': ['grunge','rock','alternative rock'],
-  'the strokes': ['rock','indie rock','alternative'],
-  'vampire weekend': ['indie rock','indie pop','alternative'],
-  'frank turner': ['folk punk','rock','alternative'],
-  'mgmt': ['psychedelic pop','indie pop','alternative'],
-  'glass animals': ['indie pop','psychedelic pop','alternative'],
-  'jorja smith': ['r&b','soul','indie pop'],
-  // Electronic
-  'disclosure': ['electronic','house','dance'],
-  'four tet': ['electronic','ambient','indie electronic'],
-  'jamie xx': ['electronic','house','indie electronic'],
-  'flume': ['electronic','future bass','indie electronic'],
-  'kaytranada': ['electronic','house','r&b'],
-  'anderson .paak': ['r&b','hip-hop','soul','funk'],
-  'anderson paak': ['r&b','hip-hop','soul','funk'],
-  'silk sonic': ['r&b','soul','funk'],
+  'kanye west':['hip-hop','rap','chicago rap'],'drake':['hip-hop','rap','r&b'],
+  'j. cole':['hip-hop','rap','conscious hip-hop'],'j cole':['hip-hop','rap','conscious hip-hop'],
+  'westside gunn':['hip-hop','rap','griselda'],'feature':['hip-hop','rap'],
+  'kendrick lamar':['hip-hop','rap','west coast rap'],'travis scott':['hip-hop','rap','trap'],
+  'playboi carti':['hip-hop','rap','trap'],'lil uzi vert':['hip-hop','rap','trap'],
+  'future':['hip-hop','trap','rap'],'young thug':['hip-hop','trap','rap'],
+  '21 savage':['hip-hop','trap','rap'],'metro boomin':['hip-hop','trap','rap'],
+  'gunna':['hip-hop','trap','rap'],'lil baby':['hip-hop','trap','rap'],
+  'nba youngboy':['hip-hop','rap','trap'],'polo g':['hip-hop','rap','drill'],
+  'juice wrld':['hip-hop','emo rap','trap'],'xxxtentacion':['hip-hop','emo rap','trap'],
+  'post malone':['hip-hop','pop rap','trap'],'eminem':['hip-hop','rap','detroit rap'],
+  'nas':['hip-hop','rap','east coast rap'],'jay-z':['hip-hop','rap','east coast rap'],
+  'jay z':['hip-hop','rap','east coast rap'],'lil wayne':['hip-hop','rap','new orleans rap'],
+  'nicki minaj':['hip-hop','rap','pop rap'],'cardi b':['hip-hop','rap','trap'],
+  'megan thee stallion':['hip-hop','rap','trap'],'a$ap rocky':['hip-hop','rap','trap'],
+  'asap rocky':['hip-hop','rap','trap'],'tyler the creator':['hip-hop','rap','alternative hip-hop'],
+  'tyler, the creator':['hip-hop','rap','alternative hip-hop'],'earl sweatshirt':['hip-hop','rap','alternative hip-hop'],
+  'vince staples':['hip-hop','rap','west coast rap'],'schoolboy q':['hip-hop','rap','west coast rap'],
+  'freddie gibbs':['hip-hop','rap','gangsta rap'],'conway the machine':['hip-hop','rap','griselda'],
+  'benny the butcher':['hip-hop','rap','griselda'],'pusha t':['hip-hop','rap','east coast rap'],
+  'rick ross':['hip-hop','rap','trap'],'meek mill':['hip-hop','rap','philadelphia rap'],
+  'big sean':['hip-hop','rap','detroit rap'],'chance the rapper':['hip-hop','rap','gospel rap'],
+  'childish gambino':['hip-hop','rap','r&b'],'logic':['hip-hop','rap','conscious hip-hop'],
+  'mac miller':['hip-hop','rap','alternative hip-hop'],'joey bada$$':['hip-hop','rap','boom bap'],
+  'joey badass':['hip-hop','rap','boom bap'],'denzel curry':['hip-hop','rap','florida rap'],
+  'larry june':['hip-hop','rap','west coast rap'],'don toliver':['hip-hop','r&b','trap'],
+  'rod wave':['hip-hop','r&b','trap soul'],'summer walker':['r&b','soul','trap soul'],
+  'the weeknd':['r&b','pop','dark r&b'],'frank ocean':['r&b','neo soul','alternative r&b'],
+  'sza':['r&b','neo soul','alternative r&b'],'khalid':['r&b','pop','indie pop'],
+  '6lack':['r&b','trap soul'],'bryson tiller':['r&b','trap soul'],
+  'partynextdoor':['r&b','trap soul'],'taylor swift':['pop','country pop'],
+  'ariana grande':['pop','r&b'],'billie eilish':['pop','indie pop','dark pop'],
+  'olivia rodrigo':['pop','pop rock'],'dua lipa':['pop','dance pop'],
+  'bad bunny':['latin trap','reggaeton','latin pop'],'j balvin':['reggaeton','latin pop'],
+  'arctic monkeys':['rock','indie rock','alternative'],'radiohead':['rock','alternative','art rock'],
+  'tame impala':['psychedelic pop','indie rock','alternative'],'the weeknd':['r&b','pop','dark r&b'],
+  'anderson .paak':['r&b','hip-hop','soul','funk'],'anderson paak':['r&b','hip-hop','soul','funk'],
+  'silk sonic':['r&b','soul','funk'],'kaytranada':['electronic','house','r&b'],
 };
 
 function inferGenres(artists) {
-  const genreCount = {};
-  artists.forEach(artist => {
-    const name = artist.name.toLowerCase();
-    // exact match
-    if (ARTIST_GENRE_MAP[name]) {
-      ARTIST_GENRE_MAP[name].forEach(g => { genreCount[g] = (genreCount[g]||0) + 2; });
-      return;
-    }
-    // partial match
-    for (const [key, genres] of Object.entries(ARTIST_GENRE_MAP)) {
-      if (name.includes(key) || key.includes(name)) {
-        genres.forEach(g => { genreCount[g] = (genreCount[g]||0) + 1; });
-        break;
-      }
+  const g={};
+  artists.forEach(a=>{
+    const name=a.name.toLowerCase();
+    if(ARTIST_GENRE_MAP[name]){ARTIST_GENRE_MAP[name].forEach(x=>{g[x]=(g[x]||0)+2;});return;}
+    for(const [key,genres] of Object.entries(ARTIST_GENRE_MAP)){
+      if(name.includes(key)||key.includes(name)){genres.forEach(x=>{g[x]=(g[x]||0)+1;});break;}
     }
   });
-  return Object.entries(genreCount).sort((a,b)=>b[1]-a[1]).map(e=>e[0]);
+  return Object.entries(g).sort((a,b)=>b[1]-a[1]).map(e=>e[0]);
 }
 
-function setDebug(msg) {
-  console.log('[FW]', msg);
-  const el = document.getElementById('debug-bar');
-  if (el) el.textContent = '🎵 ' + msg;
-}
+function setDebug(msg){console.log('[FW]',msg);const el=document.getElementById('debug-bar');if(el)el.textContent='🎵 '+msg;}
 
-function generateCodeVerifier(length=128) {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
-  let r=''; crypto.getRandomValues(new Uint8Array(length)).forEach(v=>{r+=chars[v%chars.length];}); return r;
+function generateCodeVerifier(length=128){
+  const chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
+  let r='';crypto.getRandomValues(new Uint8Array(length)).forEach(v=>{r+=chars[v%chars.length];});return r;
 }
-async function generateCodeChallenge(v) {
+async function generateCodeChallenge(v){
   const d=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v));
   return btoa(String.fromCharCode(...new Uint8Array(d))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
 }
-async function initiateLogin() {
-  const v=generateCodeVerifier(); localStorage.setItem('pkce_verifier',v);
+async function initiateLogin(){
+  const v=generateCodeVerifier();localStorage.setItem('pkce_verifier',v);
   const p=new URLSearchParams({client_id:CLIENT_ID,response_type:'code',redirect_uri:REDIRECT_URI,
     code_challenge_method:'S256',code_challenge:await generateCodeChallenge(v),scope:SCOPES,show_dialog:'true'});
   window.location.href=`https://accounts.spotify.com/authorize?${p}`;
 }
-async function exchangeToken(code) {
-  const v=localStorage.getItem('pkce_verifier');
-  if(!v) throw new Error('No PKCE verifier');
-  const r=await fetch('https://accounts.spotify.com/api/token',{
-    method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},
-    body:new URLSearchParams({client_id:CLIENT_ID,grant_type:'authorization_code',code,redirect_uri:REDIRECT_URI,code_verifier:v})
-  });
-  const d=await r.json();
-  if(!r.ok) throw new Error(d.error_description||d.error||'Token failed');
-  localStorage.removeItem('pkce_verifier'); return d;
+async function exchangeToken(code){
+  const v=localStorage.getItem('pkce_verifier');if(!v)throw new Error('No PKCE verifier');
+  const r=await fetch('https://accounts.spotify.com/api/token',{method:'POST',
+    headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    body:new URLSearchParams({client_id:CLIENT_ID,grant_type:'authorization_code',code,redirect_uri:REDIRECT_URI,code_verifier:v})});
+  const d=await r.json();if(!r.ok)throw new Error(d.error_description||d.error||'Token failed');
+  localStorage.removeItem('pkce_verifier');return d;
 }
 
-async function fetchAllData(token, timeRange) {
+async function fetchAllData(token,timeRange){
   setDebug('Fetching '+timeRange+'...');
   const h={Authorization:`Bearer ${token}`};
   const get=async(url)=>{try{const r=await fetch(url,{headers:h});if(!r.ok)return null;return await r.json();}catch(e){return null;}};
-
   const [tracksData,artistsData,profileData,recentData]=await Promise.all([
     get(`https://api.spotify.com/v1/me/top/tracks?limit=50&time_range=${timeRange}`),
     get(`https://api.spotify.com/v1/me/top/artists?limit=50&time_range=${timeRange}`),
     get('https://api.spotify.com/v1/me'),
     get('https://api.spotify.com/v1/me/player/recently-played?limit=50'),
   ]);
-
   const tracks=tracksData?.items||[];
   const artists=artistsData?.items||[];
   const recentTracks=(recentData?.items||[]).map(i=>({...i.track,played_at:i.played_at}));
-
-  // Try Spotify genres first, fall back to inferred
   const spotifyGenreMap={};
   artists.forEach(a=>(a.genres||[]).forEach(g=>{spotifyGenreMap[g]=(spotifyGenreMap[g]||0)+1;}));
   const spotifyGenres=Object.entries(spotifyGenreMap).sort((a,b)=>b[1]-a[1]).map(e=>e[0]);
-
-  const inferredGenres=inferGenres(artists);
-  const genres=spotifyGenres.length>0 ? spotifyGenres : inferredGenres;
-
-  setDebug(`${tracks.length} tracks · ${artists.length} artists · ${spotifyGenres.length} spotify genres · ${inferredGenres.length} inferred genres`);
-
-  // Albums from tracks
+  const genres=spotifyGenres.length>0?spotifyGenres:inferGenres(artists);
+  setDebug(`${tracks.length} tracks · ${artists.length} artists · ${genres.length} genres`);
   const albumMap={};
-  tracks.forEach(t=>{
-    const a=t.album; if(!a?.id)return;
-    if(!albumMap[a.id])albumMap[a.id]={...a,trackCount:0};
-    albumMap[a.id].trackCount++;
-  });
+  tracks.forEach(t=>{const a=t.album;if(!a?.id)return;if(!albumMap[a.id])albumMap[a.id]={...a,trackCount:0};albumMap[a.id].trackCount++;});
   const albums=Object.values(albumMap).sort((a,b)=>b.trackCount-a.trackCount);
-
-  return {tracks,artists,albums,recentTracks,genres,profile:profileData||{}};
+  return{tracks,artists,albums,recentTracks,genres,profile:profileData||{}};
 }
 
-function getTopDecade(tracks) {
-  const d={};
-  tracks.forEach(t=>{const y=parseInt((t.album?.release_date||'2000').slice(0,4));const dec=Math.floor(y/10)*10;d[dec]=(d[dec]||0)+1;});
-  const s=Object.entries(d).sort((a,b)=>b[1]-a[1]);
-  return s.length>0?s[0][0]+'s':null;
+function getTopDecade(tracks){
+  const d={};tracks.forEach(t=>{const y=parseInt((t.album?.release_date||'2000').slice(0,4));const dec=Math.floor(y/10)*10;d[dec]=(d[dec]||0)+1;});
+  const s=Object.entries(d).sort((a,b)=>b[1]-a[1]);return s.length>0?s[0][0]+'s':null;
 }
-function getDecadeBreakdown(tracks) {
-  const d={};
-  tracks.forEach(t=>{const y=parseInt((t.album?.release_date||'2000').slice(0,4));const dec=Math.floor(y/10)*10;d[dec]=(d[dec]||0)+1;});
-  const s=Object.entries(d).sort((a,b)=>b[1]-a[1]).slice(0,4);
-  const max=s[0]?.[1]||1;
+function getDecadeBreakdown(tracks){
+  const d={};tracks.forEach(t=>{const y=parseInt((t.album?.release_date||'2000').slice(0,4));const dec=Math.floor(y/10)*10;d[dec]=(d[dec]||0)+1;});
+  const s=Object.entries(d).sort((a,b)=>b[1]-a[1]).slice(0,4);const max=s[0]?.[1]||1;
   return s.map(([dec,c])=>({decade:dec+'s',count:c,pct:Math.round((c/max)*100)}));
 }
-function timeAgo(ds) {
+function timeAgo(ds){
   const diff=Date.now()-new Date(ds).getTime(),m=Math.floor(diff/60000);
-  if(m<1)return'just now';if(m<60)return m+'m ago';
-  const h=Math.floor(m/60);if(h<24)return h+'h ago';return Math.floor(h/24)+'d ago';
+  if(m<1)return'just now';if(m<60)return m+'m ago';const h=Math.floor(m/60);if(h<24)return h+'h ago';return Math.floor(h/24)+'d ago';
 }
 function rankClass(i){return['rank-1','rank-2','rank-3'][i]||'rank-other';}
 
-function LoadingScreen({message='Loading…'}) {
+function LoadingScreen({message='Loading…'}){
   return <div className="loading-screen"><div className="loading-bars">{[1,2,3,4,5].map(i=><span key={i}/>)}</div><p className="loading-text">{message}</p></div>;
 }
-
-function LoginScreen() {
+function LoginScreen(){
   const sp="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z";
-  return (
+  return(
     <div className="login-screen">
       <div className="logo-mark"><svg viewBox="0 0 24 24"><path d={sp}/></svg></div>
       <h1 className="login-title">Forever<br/><span>Wrapped</span></h1>
       <p className="login-subtitle">Your Spotify listening history, beautifully visualized — for any time period, any time.</p>
       <button className="btn-login" onClick={initiateLogin}>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d={sp}/></svg>
-        Connect with Spotify
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d={sp}/></svg>Connect with Spotify
       </button>
       <div className="login-features">
         {['Top Tracks','Top Artists','Top Albums','Recently Played'].map(f=>(
@@ -397,9 +300,8 @@ function LoginScreen() {
     </div>
   );
 }
-
-function TimeSelector({value,onChange}) {
-  return (
+function TimeSelector({value,onChange}){
+  return(
     <div className="time-selector">
       {[['short_term','Last 4 Weeks'],['medium_term','Last 6 Months'],['long_term','All Time']].map(([v,l])=>(
         <button key={v} className={`time-btn ${value===v?'active':''}`} onClick={()=>onChange(v)}>{l}</button>
@@ -407,9 +309,8 @@ function TimeSelector({value,onChange}) {
     </div>
   );
 }
-
-function TrackRow({track,index,showTime}) {
-  return (
+function TrackRow({track,index,showTime}){
+  return(
     <div className="track-card" onClick={()=>window.open(track.external_urls?.spotify,'_blank')}>
       <span className={`track-rank ${rankClass(index)}`}>#{index+1}</span>
       <img className="track-art" src={track.album?.images?.[0]?.url||''} alt={track.name} onError={e=>{e.target.src='https://via.placeholder.com/52/222/555?text=♪';}}/>
@@ -423,9 +324,8 @@ function TrackRow({track,index,showTime}) {
     </div>
   );
 }
-
-function ArtistCard({artist,index}) {
-  return (
+function ArtistCard({artist,index}){
+  return(
     <div className="artist-card" onClick={()=>window.open(artist.external_urls?.spotify,'_blank')}>
       <span className="artist-rank-badge">#{index+1}</span>
       <img className="artist-img" src={artist.images?.[0]?.url||''} alt={artist.name} onError={e=>{e.target.src='https://via.placeholder.com/80/222/555?text=♪';}}/>
@@ -434,14 +334,11 @@ function ArtistCard({artist,index}) {
     </div>
   );
 }
-
-function AlbumCard({album}) {
+function AlbumCard({album}){
   const year=(album.release_date||'').slice(0,4);
-  return (
+  return(
     <div className="album-card" onClick={()=>window.open(album.external_urls?.spotify,'_blank')}>
-      <div className="album-img-wrap">
-        <img src={album.images?.[0]?.url||''} alt={album.name} onError={e=>{e.target.src='https://via.placeholder.com/200/222/555?text=♪';}}/>
-      </div>
+      <img className="album-img" src={album.images?.[0]?.url||''} alt={album.name} onError={e=>{e.target.src='https://via.placeholder.com/200/222/555?text=♪';}}/>
       <div className="album-name">{album.name}</div>
       <div className="album-artist">{(album.artists||[]).map(a=>a.name).join(', ')}</div>
       {year&&<div className="album-year">{year}</div>}
@@ -449,18 +346,16 @@ function AlbumCard({album}) {
   );
 }
 
-function ShowMoreSection({title,items,renderItem,initialCount=5,step=5,gridClass}) {
+function ShowMoreSection({title,items,renderItem,initialCount=5,step=5,containerClass,gridClass}){
   const [visible,setVisible]=useState(initialCount);
   useEffect(()=>{setVisible(initialCount);},[items,initialCount]);
   const shown=items.slice(0,visible);
   const remaining=items.length-visible;
-  return (
+  const cls=containerClass||gridClass||'track-list';
+  return(
     <div className="section-wrap">
       <div className="section-title">{title}</div>
-      {gridClass
-        ?<div className={gridClass}>{shown.map((item,i)=>renderItem(item,i))}</div>
-        :<div className="track-list">{shown.map((item,i)=>renderItem(item,i))}</div>
-      }
+      <div className={cls}>{shown.map((item,i)=>renderItem(item,i))}</div>
       {remaining>0&&(
         <button className="btn-more" onClick={()=>setVisible(v=>Math.min(v+step,items.length))}>
           + Show {Math.min(step,remaining)} more
@@ -470,21 +365,19 @@ function ShowMoreSection({title,items,renderItem,initialCount=5,step=5,gridClass
   );
 }
 
-function VibeBanner({tracks,genres}) {
+function VibeBanner({tracks,genres}){
   const topDecade=getTopDecade(tracks);
   const breakdown=getDecadeBreakdown(tracks);
   const topGenres=genres.slice(0,6);
-  return (
+  return(
     <div className="vibe-banner">
       <div className="vibe-left">
         <div className="vibe-eyebrow">Your Music Era</div>
         <div className="vibe-value">{topDecade||'Mixed'}</div>
         <div className="vibe-desc">Based on your top track release years</div>
         {topGenres.length>0?(
-          <>
-            <div className="vibe-eyebrow" style={{marginTop:16}}>Top Genres</div>
-            <div className="genre-tags">{topGenres.map(g=><span className="genre-tag" key={g}>{g}</span>)}</div>
-          </>
+          <><div className="vibe-eyebrow" style={{marginTop:16}}>Top Genres</div>
+          <div className="genre-tags">{topGenres.map(g=><span className="genre-tag" key={g}>{g}</span>)}</div></>
         ):(
           <div className="vibe-desc" style={{marginTop:10,fontStyle:'italic',opacity:0.6}}>Genre data unavailable</div>
         )}
@@ -504,43 +397,33 @@ function VibeBanner({tracks,genres}) {
   );
 }
 
-function Dashboard({token,onLogout}) {
+function Dashboard({token,onLogout}){
   const [timeRange,setTimeRange]=useState('medium_term');
   const [data,setData]=useState(null);
   const [loading,setLoading]=useState(true);
   const [error,setError]=useState(null);
   const [showCopied,setShowCopied]=useState(false);
-
   const load=useCallback(async()=>{
     setLoading(true);setError(null);setData(null);
     try{setData(await fetchAllData(token,timeRange));}
     catch(e){if(e.message==='TOKEN_EXPIRED')onLogout();else setError(e.message);}
     finally{setLoading(false);}
   },[token,timeRange]);
-
   useEffect(()=>{load();},[load]);
   if(loading)return <LoadingScreen message="Fetching your music data…"/>;
-
-  const tracks=data?.tracks||[];
-  const artists=data?.artists||[];
-  const albums=data?.albums||[];
-  const recent=data?.recentTracks||[];
-  const genres=data?.genres||[];
-  const profile=data?.profile||{};
+  const tracks=data?.tracks||[],artists=data?.artists||[],albums=data?.albums||[];
+  const recent=data?.recentTracks||[],genres=data?.genres||[],profile=data?.profile||{};
   const hasData=tracks.length>0||artists.length>0;
   const topDecade=getTopDecade(tracks);
-  const timeLabel={short_term:'Last 4 Weeks',medium_term:'Last 6 Months',long_term:'All Time'}[timeRange];
-
   const handleShare=()=>{
     const text=`🎵 My Forever Wrapped:\n#1 Track: ${tracks[0]?.name||'?'}\n#1 Artist: ${artists[0]?.name||'?'}\nTop Genre: ${genres[0]||'N/A'}\nTop Era: ${topDecade||'Mixed'}\n\nforever-wrapped.onrender.com`;
     navigator.clipboard.writeText(text).then(()=>{setShowCopied(true);setTimeout(()=>setShowCopied(false),2600);});
   };
   const tweetShare=()=>{
-    const text=encodeURIComponent(`🎵 My #ForeverWrapped: Top Artist is ${artists[0]?.name||'?'} — listening to ${genres[0]||'good music'} in the ${topDecade||'past'} 🎶`);
+    const text=encodeURIComponent(`🎵 My #ForeverWrapped: Top Artist is ${artists[0]?.name||'?'} — ${genres[0]||'good music'} in the ${topDecade||'past'} 🎶`);
     window.open(`https://twitter.com/intent/tweet?text=${text}`,'_blank');
   };
-
-  return (
+  return(
     <div className="dashboard">
       <div className="dash-header">
         <div className="dash-brand"><div className="dash-brand-dot"/><div className="dash-brand-name">Forever<span>Wrapped</span></div></div>
@@ -554,15 +437,11 @@ function Dashboard({token,onLogout}) {
           <button className="btn-logout" onClick={onLogout}>Sign out</button>
         </div>
       </div>
-
       <TimeSelector value={timeRange} onChange={setTimeRange}/>
-
       {error&&<div className="error-card">⚠️ {error} <button onClick={load} style={{background:'none',border:'none',color:'inherit',cursor:'pointer',textDecoration:'underline',marginLeft:8}}>Retry</button></div>}
-
       {!error&&!hasData&&(
         <div className="empty-state">
-          <div className="emoji">🎵</div>
-          <h2>Not enough listening history</h2>
+          <div className="emoji">🎵</div><h2>Not enough listening history</h2>
           <p>Try <strong>All Time</strong> or listen to more music and check back!</p>
           <div className="time-selector" style={{justifyContent:'center',marginTop:24}}>
             {[['short_term','Last 4 Weeks'],['medium_term','Last 6 Months'],['long_term','All Time']].map(([v,l])=>(
@@ -571,55 +450,41 @@ function Dashboard({token,onLogout}) {
           </div>
         </div>
       )}
-
       {!error&&hasData&&(
         <>
           <div className="hero-section">
             <div className="hero-card">
               <div className="hero-label">🎵 Top Track</div>
-              {tracks[0]&&<>
-                <img className="hero-img" src={tracks[0].album?.images?.[0]?.url||''} alt={tracks[0].name} onError={e=>{e.target.src='https://via.placeholder.com/72/222/555?text=♪';}}/>
-                <div className="hero-value">{tracks[0].name}</div>
-                <div className="hero-meta">{(tracks[0].artists||[]).map(a=>a.name).join(', ')}</div>
-              </>}
+              {tracks[0]&&<><img className="hero-img" src={tracks[0].album?.images?.[0]?.url||''} alt={tracks[0].name} onError={e=>{e.target.src='https://via.placeholder.com/72/222/555?text=♪';}}/>
+              <div className="hero-value">{tracks[0].name}</div><div className="hero-meta">{(tracks[0].artists||[]).map(a=>a.name).join(', ')}</div></>}
             </div>
             <div className="hero-card">
               <div className="hero-label">🎤 Top Artist</div>
-              {artists[0]&&<>
-                <img className="hero-img circle" src={artists[0].images?.[0]?.url||''} alt={artists[0].name} onError={e=>{e.target.src='https://via.placeholder.com/72/222/555?text=♪';}}/>
-                <div className="hero-value">{artists[0].name}</div>
-                <div className="hero-meta">{genres[0]||'Artist'}</div>
-              </>}
+              {artists[0]&&<><img className="hero-img circle" src={artists[0].images?.[0]?.url||''} alt={artists[0].name} onError={e=>{e.target.src='https://via.placeholder.com/72/222/555?text=♪';}}/>
+              <div className="hero-value">{artists[0].name}</div><div className="hero-meta">{genres[0]||'Artist'}</div></>}
             </div>
             <div className="hero-card">
               <div className="hero-label">💿 Top Album</div>
-              {albums[0]&&<>
-                <img className="hero-img" src={albums[0].images?.[0]?.url||''} alt={albums[0].name} onError={e=>{e.target.src='https://via.placeholder.com/72/222/555?text=♪';}}/>
-                <div className="hero-value">{albums[0].name}</div>
-                <div className="hero-meta">{(albums[0].artists||[]).map(a=>a.name).join(', ')}</div>
-              </>}
+              {albums[0]&&<><img className="hero-img" src={albums[0].images?.[0]?.url||''} alt={albums[0].name} onError={e=>{e.target.src='https://via.placeholder.com/72/222/555?text=♪';}}/>
+              <div className="hero-value">{albums[0].name}</div><div className="hero-meta">{(albums[0].artists||[]).map(a=>a.name).join(', ')}</div></>}
             </div>
           </div>
-
           <div className="stats-row">
             <div className="stat-block"><span className="stat-icon">🎵</span><div className="stat-number">{tracks.length}</div><div className="stat-label">Top tracks</div></div>
             <div className="stat-block"><span className="stat-icon">🎤</span><div className="stat-number">{artists.length}</div><div className="stat-label">Top artists</div></div>
             <div className="stat-block"><span className="stat-icon">📅</span><div className="stat-number">{topDecade||'—'}</div><div className="stat-label">Your top era</div></div>
           </div>
-
           <VibeBanner tracks={tracks} genres={genres}/>
-
-          <ShowMoreSection title="Top Tracks" items={tracks} initialCount={5} step={5}
+          <ShowMoreSection title="Top Tracks" items={tracks} initialCount={5} step={5} containerClass="track-list"
             renderItem={(t,i)=><TrackRow key={t.id} track={t} index={i} showTime={false}/>}/>
-          <ShowMoreSection title="Top Artists" items={artists} initialCount={5} step={5} gridClass="artists-grid"
+          <ShowMoreSection title="Top Artists" items={artists} initialCount={5} step={5} containerClass="artists-grid"
             renderItem={(a,i)=><ArtistCard key={a.id} artist={a} index={i}/>}/>
-          <ShowMoreSection title="Top Albums" items={albums} initialCount={5} step={5} gridClass="albums-grid"
+          <ShowMoreSection title="Top Albums" items={albums} initialCount={5} step={5} containerClass="albums-flex"
             renderItem={(a,i)=><AlbumCard key={a.id} album={a} index={i}/>}/>
           {recent.length>0&&(
-            <ShowMoreSection title="Recently Played" items={recent} initialCount={5} step={5}
+            <ShowMoreSection title="Recently Played" items={recent} initialCount={5} step={5} containerClass="track-list"
               renderItem={(t,i)=><TrackRow key={t.id+'-'+i} track={t} index={i} showTime={true}/>}/>
           )}
-
           <div className="share-section">
             <div className="share-text"><h3>Share your Wrapped</h3><p>Let the world know what you've been listening to</p></div>
             <div className="share-buttons">
@@ -637,11 +502,10 @@ function Dashboard({token,onLogout}) {
   );
 }
 
-function App() {
+function App(){
   const [token,setToken]=useState(()=>sessionStorage.getItem('spotify_token'));
   const [loading,setLoading]=useState(false);
   const [error,setError]=useState(null);
-
   useEffect(()=>{
     const p=new URLSearchParams(window.location.search);
     const code=p.get('code'),err=p.get('error');
@@ -655,8 +519,7 @@ function App() {
         .finally(()=>setLoading(false));
     }
   },[]);
-
-  return (
+  return(
     <div id="app">
       <div className="bg-orbs"><div className="orb orb1"/><div className="orb orb2"/><div className="orb orb3"/></div>
       {loading&&<LoadingScreen message="Connecting to Spotify…"/>}
@@ -672,7 +535,6 @@ function App() {
     </div>
   );
 }
-
 ReactDOM.createRoot(document.getElementById('app')).render(<App/>);
 </script>
 </body>
