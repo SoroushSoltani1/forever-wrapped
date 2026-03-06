@@ -209,7 +209,7 @@ async function fetchAllData(token, timeRange) {
 
   const [tracksData, artistsData, profileData] = await Promise.all([
     safeGet(`https://api.spotify.com/v1/me/top/tracks?limit=10&time_range=${timeRange}`),
-    safeGet(`https://api.spotify.com/v1/me/top/artists?limit=10&time_range=${timeRange}`),
+    safeGet(`https://api.spotify.com/v1/me/top/artists?limit=50&time_range=${timeRange}`),
     safeGet('https://api.spotify.com/v1/me'),
   ]);
 
