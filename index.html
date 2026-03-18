@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Forever Wrapped</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&family=Space+Mono:wght@400;700&family=Circular+Std:wght@400;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -26,6 +26,11 @@
     @keyframes barBounce { 0%,100%{transform:scaleY(0.5);opacity:0.4;}50%{transform:scaleY(1);opacity:1;} }
     @keyframes pulseGlow { 0%,100%{box-shadow:0 0 60px rgba(29,185,84,0.4);}50%{box-shadow:0 0 100px rgba(29,185,84,0.7);} }
     @keyframes toastIn { 0%{opacity:0;transform:translateX(-50%) translateY(20px);}15%,75%{opacity:1;transform:translateX(-50%) translateY(0);}100%{opacity:0;transform:translateX(-50%) translateY(-10px);} }
+    @keyframes slideUp { from{opacity:0;transform:translateY(40px);}to{opacity:1;transform:translateY(0);} }
+    @keyframes popIn { 0%{opacity:0;transform:scale(0.8);}100%{opacity:1;transform:scale(1);} }
+    @keyframes wiggle { 0%,100%{transform:rotate(-2deg);}50%{transform:rotate(2deg);} }
+
+    /* ── LOGIN ── */
     .login-screen { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;text-align:center;animation:fadeIn 0.8s ease both; }
     .logo-mark { width:80px;height:80px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 32px;animation:pulseGlow 3s ease-in-out infinite; }
     .logo-mark svg { width:44px;height:44px;fill:var(--black); }
@@ -37,6 +42,107 @@
     .login-features { display:flex;gap:24px;margin-top:60px;flex-wrap:wrap;justify-content:center; }
     .feature-pill { display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);padding:10px 18px;border-radius:100px;font-size:13px;color:var(--text-muted); }
     .feature-pill .dot { width:6px;height:6px;border-radius:50%;background:var(--green); }
+
+    /* ── YEAR STORY EXPERIENCE ── */
+    .story-section { position: relative; }
+    .year-tabs { display:flex;gap:8px;padding:24px 24px 0;max-width:1200px;margin:0 auto;flex-wrap:wrap; }
+    .year-tab { background:var(--surface2);border:2px solid var(--border);color:var(--text-muted);font-family:var(--font-display);font-size:13px;font-weight:700;padding:8px 20px;border-radius:100px;cursor:pointer;transition:all 0.2s; }
+    .year-tab.active { color:var(--black);border-color:transparent; }
+    .year-tab[data-year="2024"].active { background:#FF6B35; }
+    .year-tab[data-year="2023"].active { background:#FF2D55; }
+    .year-tab[data-year="2022"].active { background:#8B5CF6; }
+    .year-tab[data-year="2021"].active { background:#1DB954; }
+
+    /* Story viewer */
+    .story-viewer {
+      position: relative;
+      width: 100%;
+      max-width: 420px;
+      margin: 24px auto 0;
+      border-radius: 28px;
+      overflow: hidden;
+      aspect-ratio: 9/16;
+      cursor: pointer;
+      user-select: none;
+    }
+    .story-progress { display:flex;gap:4px;position:absolute;top:16px;left:16px;right:16px;z-index:10; }
+    .story-progress-bar { flex:1;height:3px;background:rgba(255,255,255,0.3);border-radius:2px;overflow:hidden; }
+    .story-progress-fill { height:100%;background:#fff;border-radius:2px;transition:width 0.1s linear; }
+    .story-nav { position:absolute;inset:0;display:flex;z-index:9; }
+    .story-nav-left { flex:1; }
+    .story-nav-right { flex:1; }
+
+    /* Slide base */
+    .story-slide { position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 28px 40px;text-align:center;transition:opacity 0.3s;opacity:0;pointer-events:none; }
+    .story-slide.active { opacity:1;pointer-events:auto; }
+    .slide-logo { position:absolute;top:32px;left:50%;transform:translateX(-50%);font-size:11px;font-weight:700;letter-spacing:3px;opacity:0.8; }
+
+    /* 2024 Style — sleek gradient, bold white type */
+    .slide-2024-intro { background:linear-gradient(160deg,#0a0a0a 0%,#1a1a2e 50%,#16213e 100%); }
+    .slide-2024-intro .big-number { font-size:clamp(80px,20vw,160px);font-weight:900;letter-spacing:-8px;line-height:0.85;background:linear-gradient(135deg,#FF6B35,#FFD93D);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text; }
+    .slide-2024-tracks { background:linear-gradient(160deg,#0d0d0d,#1a0a2e); }
+    .slide-2024-artists { background:linear-gradient(160deg,#0a1a0a,#0d2b1a); }
+    .slide-2024-genre { background:linear-gradient(160deg,#1a0a0a,#2b1a0d); }
+    .slide-2024-minutes { background:linear-gradient(160deg,#0a0a1a,#1a0a2e); }
+    .slide-2024-end { background:linear-gradient(160deg,#0a0a0a,#1DB954 200%); }
+
+    /* 2023 Style — fiery red/rose/mint chaos */
+    .slide-2023-intro { background:#FF2D55; }
+    .slide-2023-tracks { background:#000000;border:none; }
+    .slide-2023-artists { background:#00C4A7; }
+    .slide-2023-genre { background:#FF2D55; }
+    .slide-2023-minutes { background:#000000; }
+    .slide-2023-end { background:#FF9500; }
+    .squiggle { position:absolute;opacity:0.15;pointer-events:none; }
+
+    /* 2022 Style — monogram shapes, vibrant gradients */
+    .slide-2022-intro { background:linear-gradient(135deg,#7C3AED,#EC4899); }
+    .slide-2022-tracks { background:linear-gradient(135deg,#059669,#0891B2); }
+    .slide-2022-artists { background:linear-gradient(135deg,#DC2626,#7C3AED); }
+    .slide-2022-genre { background:linear-gradient(135deg,#D97706,#DC2626); }
+    .slide-2022-minutes { background:linear-gradient(135deg,#0891B2,#7C3AED); }
+    .slide-2022-end { background:linear-gradient(135deg,#059669,#7C3AED); }
+
+    /* 2021 Style — bold black/white/green minimal */
+    .slide-2021-intro { background:#000000; }
+    .slide-2021-tracks { background:#121212; }
+    .slide-2021-artists { background:#000000; }
+    .slide-2021-genre { background:#1DB954; }
+    .slide-2021-minutes { background:#121212; }
+    .slide-2021-end { background:#000000; }
+
+    /* Slide content components */
+    .slide-year-badge { font-size:11px;font-weight:700;letter-spacing:3px;opacity:0.6;margin-bottom:16px;text-transform:uppercase; }
+    .slide-headline { font-size:clamp(14px,3.5vw,18px);font-weight:300;line-height:1.5;margin-bottom:8px;opacity:0.8; }
+    .slide-big { font-size:clamp(36px,9vw,56px);font-weight:900;letter-spacing:-2px;line-height:1;margin-bottom:12px; }
+    .slide-sub { font-size:clamp(13px,3vw,15px);font-weight:300;opacity:0.7;line-height:1.4; }
+    .slide-number { font-size:clamp(64px,18vw,120px);font-weight:900;letter-spacing:-6px;line-height:0.9;margin-bottom:8px; }
+    .slide-track-list { width:100%;text-align:left;display:flex;flex-direction:column;gap:10px;margin-top:8px; }
+    .slide-track-item { display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.1);border-radius:12px;padding:10px 12px; }
+    .slide-track-num { font-family:var(--font-mono);font-size:12px;font-weight:700;opacity:0.5;min-width:20px; }
+    .slide-track-img { width:40px;height:40px;border-radius:6px;object-fit:cover;flex-shrink:0;background:rgba(255,255,255,0.1); }
+    .slide-track-info { flex:1;min-width:0; }
+    .slide-track-name { font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+    .slide-track-artist { font-size:11px;opacity:0.6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+    .slide-artist-grid { display:grid;grid-template-columns:repeat(2,1fr);gap:10px;width:100%;margin-top:8px; }
+    .slide-artist-item { display:flex;flex-direction:column;align-items:center;gap:8px;background:rgba(255,255,255,0.1);border-radius:14px;padding:14px 10px; }
+    .slide-artist-img { width:56px;height:56px;border-radius:50%;object-fit:cover;background:rgba(255,255,255,0.1); }
+    .slide-artist-name { font-size:12px;font-weight:700;text-align:center;line-height:1.2; }
+    .slide-artist-num { font-size:10px;opacity:0.5;font-family:var(--font-mono); }
+    .slide-genre-pill { display:inline-block;background:rgba(255,255,255,0.2);border:2px solid rgba(255,255,255,0.4);font-size:clamp(18px,5vw,28px);font-weight:900;padding:12px 28px;border-radius:100px;margin-bottom:16px;letter-spacing:-0.5px; }
+    .slide-swipe-hint { position:absolute;bottom:20px;font-size:11px;opacity:0.4;letter-spacing:1px; }
+    .slide-img-big { width:140px;height:140px;border-radius:20px;object-fit:cover;margin-bottom:16px;box-shadow:0 20px 60px rgba(0,0,0,0.5); }
+    .slide-img-big.circle { border-radius:50%; }
+    .monogram { position:absolute;font-size:200px;font-weight:900;opacity:0.06;letter-spacing:-20px;pointer-events:none;line-height:1; }
+
+    /* Scroll divider */
+    .scroll-divider { max-width:1200px;margin:48px auto 0;padding:0 24px;display:flex;align-items:center;gap:16px; }
+    .scroll-divider-line { flex:1;height:1px;background:var(--border); }
+    .scroll-divider-text { font-size:12px;font-weight:700;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;white-space:nowrap; }
+    .scroll-arrow { text-align:center;padding:8px 0 32px;font-size:24px;animation:bounce 2s ease-in-out infinite; }
+    @keyframes bounce { 0%,100%{transform:translateY(0);}50%{transform:translateY(6px);} }
+
+    /* ── DASHBOARD ── */
     .dashboard { max-width:1200px;margin:0 auto;padding:40px 24px 100px;animation:fadeIn 0.6s ease both; }
     .dash-header { display:flex;align-items:center;justify-content:space-between;margin-bottom:48px;flex-wrap:wrap;gap:16px; }
     .dash-brand { display:flex;align-items:center;gap:12px; }
@@ -89,23 +195,15 @@
     .artist-card:hover .artist-img { border-color:var(--green); }
     .artist-name { font-size:14px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
     .artist-sub { font-size:11px;color:var(--text-muted);margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
-
-    /* ── ALBUMS: flexbox wrap so each card is independent, never stretched ── */
     .albums-flex { display:flex;flex-wrap:wrap;gap:12px; }
-    .album-card {
-      background:var(--surface);border:1px solid var(--border);border-radius:16px;
-      padding:12px;cursor:pointer;transition:all 0.3s ease;
-      width:calc(20% - 10px);
-      flex-shrink:0;flex-grow:0;
-    }
-    @media(max-width:900px){ .album-card { width:calc(33.333% - 8px); } }
-    @media(max-width:500px){ .album-card { width:calc(50% - 6px); } }
+    .album-card { background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:12px;cursor:pointer;transition:all 0.3s ease;width:calc(20% - 10px);flex-shrink:0;flex-grow:0; }
+    @media(max-width:900px){.album-card{width:calc(33.333% - 8px);}}
+    @media(max-width:500px){.album-card{width:calc(50% - 6px);}}
     .album-card:hover { border-color:rgba(29,185,84,0.4);transform:translateY(-4px);box-shadow:0 16px 32px rgba(0,0,0,0.4); }
     .album-img { width:100%;display:block;border-radius:8px;aspect-ratio:1/1;object-fit:cover;margin-bottom:10px; }
     .album-name { font-size:12px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:3px; }
     .album-artist { font-size:11px;color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
     .album-year { font-size:11px;color:var(--text-dim);margin-top:2px;font-family:var(--font-mono); }
-
     .btn-more { display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:16px;background:var(--surface2);border:1px solid var(--border);color:var(--text-muted);font-family:var(--font-display);font-size:13px;font-weight:600;padding:12px;border-radius:12px;cursor:pointer;transition:all 0.2s; }
     .btn-more:hover { border-color:var(--green);color:var(--green); }
     .vibe-banner { background:linear-gradient(135deg,var(--surface),var(--surface2));border:1px solid var(--border);border-radius:24px;padding:36px 40px;display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:48px;flex-wrap:wrap;gap:24px;position:relative;overflow:hidden; }
@@ -157,7 +255,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.22.5/babel.min.js"></script>
 <script type="text/babel">
-const { useState, useEffect, useCallback } = React;
+const { useState, useEffect, useCallback, useRef } = React;
 const CLIENT_ID = '00f4d8a8c2634a6eb78c5b995349e9e3';
 const REDIRECT_URI = 'https://forever-wrapped.onrender.com/callback';
 const SCOPES = 'user-top-read user-read-private user-read-email user-read-recently-played';
@@ -180,7 +278,6 @@ const ARTIST_GENRE_MAP = {
   'megan thee stallion':['hip-hop','rap','trap'],'a$ap rocky':['hip-hop','rap','trap'],
   'asap rocky':['hip-hop','rap','trap'],'tyler the creator':['hip-hop','rap','alternative hip-hop'],
   'tyler, the creator':['hip-hop','rap','alternative hip-hop'],'earl sweatshirt':['hip-hop','rap','alternative hip-hop'],
-  'vince staples':['hip-hop','rap','west coast rap'],'schoolboy q':['hip-hop','rap','west coast rap'],
   'freddie gibbs':['hip-hop','rap','gangsta rap'],'conway the machine':['hip-hop','rap','griselda'],
   'benny the butcher':['hip-hop','rap','griselda'],'pusha t':['hip-hop','rap','east coast rap'],
   'rick ross':['hip-hop','rap','trap'],'meek mill':['hip-hop','rap','philadelphia rap'],
@@ -189,18 +286,17 @@ const ARTIST_GENRE_MAP = {
   'mac miller':['hip-hop','rap','alternative hip-hop'],'joey bada$$':['hip-hop','rap','boom bap'],
   'joey badass':['hip-hop','rap','boom bap'],'denzel curry':['hip-hop','rap','florida rap'],
   'larry june':['hip-hop','rap','west coast rap'],'don toliver':['hip-hop','r&b','trap'],
-  'rod wave':['hip-hop','r&b','trap soul'],'summer walker':['r&b','soul','trap soul'],
-  'the weeknd':['r&b','pop','dark r&b'],'frank ocean':['r&b','neo soul','alternative r&b'],
-  'sza':['r&b','neo soul','alternative r&b'],'khalid':['r&b','pop','indie pop'],
-  '6lack':['r&b','trap soul'],'bryson tiller':['r&b','trap soul'],
+  'rod wave':['hip-hop','r&b','trap soul'],'the weeknd':['r&b','pop','dark r&b'],
+  'frank ocean':['r&b','neo soul','alternative r&b'],'sza':['r&b','neo soul','alternative r&b'],
+  'khalid':['r&b','pop','indie pop'],'bryson tiller':['r&b','trap soul'],
   'partynextdoor':['r&b','trap soul'],'taylor swift':['pop','country pop'],
   'ariana grande':['pop','r&b'],'billie eilish':['pop','indie pop','dark pop'],
   'olivia rodrigo':['pop','pop rock'],'dua lipa':['pop','dance pop'],
   'bad bunny':['latin trap','reggaeton','latin pop'],'j balvin':['reggaeton','latin pop'],
   'arctic monkeys':['rock','indie rock','alternative'],'radiohead':['rock','alternative','art rock'],
-  'tame impala':['psychedelic pop','indie rock','alternative'],'the weeknd':['r&b','pop','dark r&b'],
+  'tame impala':['psychedelic pop','indie rock','alternative'],
   'anderson .paak':['r&b','hip-hop','soul','funk'],'anderson paak':['r&b','hip-hop','soul','funk'],
-  'silk sonic':['r&b','soul','funk'],'kaytranada':['electronic','house','r&b'],
+  'kaytranada':['electronic','house','r&b'],
 };
 
 function inferGenres(artists) {
@@ -217,28 +313,10 @@ function inferGenres(artists) {
 
 function setDebug(msg){console.log('[FW]',msg);const el=document.getElementById('debug-bar');if(el)el.textContent='🎵 '+msg;}
 
-function generateCodeVerifier(length=128){
-  const chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
-  let r='';crypto.getRandomValues(new Uint8Array(length)).forEach(v=>{r+=chars[v%chars.length];});return r;
-}
-async function generateCodeChallenge(v){
-  const d=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v));
-  return btoa(String.fromCharCode(...new Uint8Array(d))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
-}
-async function initiateLogin(){
-  const v=generateCodeVerifier();localStorage.setItem('pkce_verifier',v);
-  const p=new URLSearchParams({client_id:CLIENT_ID,response_type:'code',redirect_uri:REDIRECT_URI,
-    code_challenge_method:'S256',code_challenge:await generateCodeChallenge(v),scope:SCOPES,show_dialog:'true'});
-  window.location.href=`https://accounts.spotify.com/authorize?${p}`;
-}
-async function exchangeToken(code){
-  const v=localStorage.getItem('pkce_verifier');if(!v)throw new Error('No PKCE verifier');
-  const r=await fetch('https://accounts.spotify.com/api/token',{method:'POST',
-    headers:{'Content-Type':'application/x-www-form-urlencoded'},
-    body:new URLSearchParams({client_id:CLIENT_ID,grant_type:'authorization_code',code,redirect_uri:REDIRECT_URI,code_verifier:v})});
-  const d=await r.json();if(!r.ok)throw new Error(d.error_description||d.error||'Token failed');
-  localStorage.removeItem('pkce_verifier');return d;
-}
+function generateCodeVerifier(l=128){const c='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';let r='';crypto.getRandomValues(new Uint8Array(l)).forEach(v=>{r+=c[v%c.length];});return r;}
+async function generateCodeChallenge(v){const d=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v));return btoa(String.fromCharCode(...new Uint8Array(d))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');}
+async function initiateLogin(){const v=generateCodeVerifier();localStorage.setItem('pkce_verifier',v);const p=new URLSearchParams({client_id:CLIENT_ID,response_type:'code',redirect_uri:REDIRECT_URI,code_challenge_method:'S256',code_challenge:await generateCodeChallenge(v),scope:SCOPES,show_dialog:'true'});window.location.href=`https://accounts.spotify.com/authorize?${p}`;}
+async function exchangeToken(code){const v=localStorage.getItem('pkce_verifier');if(!v)throw new Error('No PKCE verifier');const r=await fetch('https://accounts.spotify.com/api/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({client_id:CLIENT_ID,grant_type:'authorization_code',code,redirect_uri:REDIRECT_URI,code_verifier:v})});const d=await r.json();if(!r.ok)throw new Error(d.error_description||d.error||'Token failed');localStorage.removeItem('pkce_verifier');return d;}
 
 async function fetchAllData(token,timeRange){
   setDebug('Fetching '+timeRange+'...');
@@ -257,242 +335,357 @@ async function fetchAllData(token,timeRange){
   artists.forEach(a=>(a.genres||[]).forEach(g=>{spotifyGenreMap[g]=(spotifyGenreMap[g]||0)+1;}));
   const spotifyGenres=Object.entries(spotifyGenreMap).sort((a,b)=>b[1]-a[1]).map(e=>e[0]);
   const genres=spotifyGenres.length>0?spotifyGenres:inferGenres(artists);
-  setDebug(`${tracks.length} tracks · ${artists.length} artists · ${genres.length} genres`);
   const albumMap={};
   tracks.forEach(t=>{const a=t.album;if(!a?.id)return;if(!albumMap[a.id])albumMap[a.id]={...a,trackCount:0};albumMap[a.id].trackCount++;});
   const albums=Object.values(albumMap).sort((a,b)=>b.trackCount-a.trackCount);
-  return{tracks,artists,albums,recentTracks,genres,profile:profileData||{}};
+  const estMinutes=Math.round(tracks.reduce((sum,t)=>(sum+(t.duration_ms||180000)),0)/60000)*8;
+  setDebug(`${tracks.length} tracks · ${artists.length} artists · ${genres.length} genres`);
+  return{tracks,artists,albums,recentTracks,genres,profile:profileData||{},estMinutes};
 }
 
-function getTopDecade(tracks){
-  const d={};tracks.forEach(t=>{const y=parseInt((t.album?.release_date||'2000').slice(0,4));const dec=Math.floor(y/10)*10;d[dec]=(d[dec]||0)+1;});
-  const s=Object.entries(d).sort((a,b)=>b[1]-a[1]);return s.length>0?s[0][0]+'s':null;
-}
-function getDecadeBreakdown(tracks){
-  const d={};tracks.forEach(t=>{const y=parseInt((t.album?.release_date||'2000').slice(0,4));const dec=Math.floor(y/10)*10;d[dec]=(d[dec]||0)+1;});
-  const s=Object.entries(d).sort((a,b)=>b[1]-a[1]).slice(0,4);const max=s[0]?.[1]||1;
-  return s.map(([dec,c])=>({decade:dec+'s',count:c,pct:Math.round((c/max)*100)}));
-}
-function timeAgo(ds){
-  const diff=Date.now()-new Date(ds).getTime(),m=Math.floor(diff/60000);
-  if(m<1)return'just now';if(m<60)return m+'m ago';const h=Math.floor(m/60);if(h<24)return h+'h ago';return Math.floor(h/24)+'d ago';
-}
+function getTopDecade(tracks){const d={};tracks.forEach(t=>{const y=parseInt((t.album?.release_date||'2000').slice(0,4));const dec=Math.floor(y/10)*10;d[dec]=(d[dec]||0)+1;});const s=Object.entries(d).sort((a,b)=>b[1]-a[1]);return s.length>0?s[0][0]+'s':null;}
+function getDecadeBreakdown(tracks){const d={};tracks.forEach(t=>{const y=parseInt((t.album?.release_date||'2000').slice(0,4));const dec=Math.floor(y/10)*10;d[dec]=(d[dec]||0)+1;});const s=Object.entries(d).sort((a,b)=>b[1]-a[1]).slice(0,4);const max=s[0]?.[1]||1;return s.map(([dec,c])=>({decade:dec+'s',count:c,pct:Math.round((c/max)*100)}));}
+function timeAgo(ds){const diff=Date.now()-new Date(ds).getTime(),m=Math.floor(diff/60000);if(m<1)return'just now';if(m<60)return m+'m ago';const h=Math.floor(m/60);if(h<24)return h+'h ago';return Math.floor(h/24)+'d ago';}
 function rankClass(i){return['rank-1','rank-2','rank-3'][i]||'rank-other';}
+function fmtMinutes(m){if(m>=60000)return Math.round(m/60000)+'M+';if(m>=1000)return(m/1000).toFixed(1)+'K';return m+'';}
 
-function LoadingScreen({message='Loading…'}){
-  return <div className="loading-screen"><div className="loading-bars">{[1,2,3,4,5].map(i=><span key={i}/>)}</div><p className="loading-text">{message}</p></div>;
-}
+function LoadingScreen({message='Loading…'}){return <div className="loading-screen"><div className="loading-bars">{[1,2,3,4,5].map(i=><span key={i}/>)}</div><p className="loading-text">{message}</p></div>;}
+
 function LoginScreen(){
   const sp="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z";
   return(
     <div className="login-screen">
       <div className="logo-mark"><svg viewBox="0 0 24 24"><path d={sp}/></svg></div>
       <h1 className="login-title">Forever<br/><span>Wrapped</span></h1>
-      <p className="login-subtitle">Your Spotify listening history, beautifully visualized — for any time period, any time.</p>
+      <p className="login-subtitle">Your Spotify Wrapped — any year's style, your current data. Plus full in-depth stats.</p>
       <button className="btn-login" onClick={initiateLogin}>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d={sp}/></svg>Connect with Spotify
       </button>
       <div className="login-features">
-        {['Top Tracks','Top Artists','Top Albums','Recently Played'].map(f=>(
+        {['2024 Style','2023 Style','2022 Style','2021 Style','Full Stats'].map(f=>(
           <div className="feature-pill" key={f}><span className="dot"/>{f}</div>
         ))}
       </div>
     </div>
   );
 }
-function TimeSelector({value,onChange}){
-  return(
-    <div className="time-selector">
-      {[['short_term','Last 4 Weeks'],['medium_term','Last 6 Months'],['long_term','All Time']].map(([v,l])=>(
-        <button key={v} className={`time-btn ${value===v?'active':''}`} onClick={()=>onChange(v)}>{l}</button>
-      ))}
-    </div>
-  );
-}
-function TrackRow({track,index,showTime}){
-  return(
-    <div className="track-card" onClick={()=>window.open(track.external_urls?.spotify,'_blank')}>
-      <span className={`track-rank ${rankClass(index)}`}>#{index+1}</span>
-      <img className="track-art" src={track.album?.images?.[0]?.url||''} alt={track.name} onError={e=>{e.target.src='https://via.placeholder.com/52/222/555?text=♪';}}/>
-      <div className="track-info">
-        <div className="track-name">{track.name}</div>
-        <div className="track-artist">{(track.artists||[]).map(a=>a.name).join(', ')}</div>
-        {showTime&&track.played_at&&<div className="track-meta">{timeAgo(track.played_at)}</div>}
-      </div>
-      {!showTime&&<div className="track-bar-wrap"><div className="track-bar" style={{width:`${track.popularity||60}%`}}/></div>}
-      {showTime&&<span className="badge">RECENT</span>}
-    </div>
-  );
-}
-function ArtistCard({artist,index}){
-  return(
-    <div className="artist-card" onClick={()=>window.open(artist.external_urls?.spotify,'_blank')}>
-      <span className="artist-rank-badge">#{index+1}</span>
-      <img className="artist-img" src={artist.images?.[0]?.url||''} alt={artist.name} onError={e=>{e.target.src='https://via.placeholder.com/80/222/555?text=♪';}}/>
-      <div className="artist-name">{artist.name}</div>
-      <div className="artist-sub">{(artist.genres||[])[0]||'Artist'}</div>
-    </div>
-  );
-}
-function AlbumCard({album}){
-  const year=(album.release_date||'').slice(0,4);
-  return(
-    <div className="album-card" onClick={()=>window.open(album.external_urls?.spotify,'_blank')}>
-      <img className="album-img" src={album.images?.[0]?.url||''} alt={album.name} onError={e=>{e.target.src='https://via.placeholder.com/200/222/555?text=♪';}}/>
-      <div className="album-name">{album.name}</div>
-      <div className="album-artist">{(album.artists||[]).map(a=>a.name).join(', ')}</div>
-      {year&&<div className="album-year">{year}</div>}
-    </div>
-  );
-}
 
-function ShowMoreSection({title,items,renderItem,initialCount=5,step=5,containerClass,gridClass}){
-  const [visible,setVisible]=useState(initialCount);
-  useEffect(()=>{setVisible(initialCount);},[items,initialCount]);
-  const shown=items.slice(0,visible);
-  const remaining=items.length-visible;
-  const cls=containerClass||gridClass||'track-list';
-  return(
-    <div className="section-wrap">
-      <div className="section-title">{title}</div>
-      <div className={cls}>{shown.map((item,i)=>renderItem(item,i))}</div>
-      {remaining>0&&(
-        <button className="btn-more" onClick={()=>setVisible(v=>Math.min(v+step,items.length))}>
-          + Show {Math.min(step,remaining)} more
-        </button>
-      )}
-    </div>
-  );
-}
+// ── STORY SLIDES per year ──
+function buildSlides(year, data) {
+  const tracks = data.tracks.slice(0,5);
+  const artists = data.artists.slice(0,5);
+  const genres = data.genres;
+  const topGenre = genres[0] || 'hip-hop';
+  const topDecade = getTopDecade(data.tracks) || '2010s';
+  const mins = fmtMinutes(data.estMinutes);
+  const t0 = tracks[0], a0 = artists[0];
 
-function VibeBanner({tracks,genres}){
-  const topDecade=getTopDecade(tracks);
-  const breakdown=getDecadeBreakdown(tracks);
-  const topGenres=genres.slice(0,6);
-  return(
-    <div className="vibe-banner">
-      <div className="vibe-left">
-        <div className="vibe-eyebrow">Your Music Era</div>
-        <div className="vibe-value">{topDecade||'Mixed'}</div>
-        <div className="vibe-desc">Based on your top track release years</div>
-        {topGenres.length>0?(
-          <><div className="vibe-eyebrow" style={{marginTop:16}}>Top Genres</div>
-          <div className="genre-tags">{topGenres.map(g=><span className="genre-tag" key={g}>{g}</span>)}</div></>
-        ):(
-          <div className="vibe-desc" style={{marginTop:10,fontStyle:'italic',opacity:0.6}}>Genre data unavailable</div>
-        )}
+  const STYLES = {
+    2024: { intro:'slide-2024-intro', tracks:'slide-2024-tracks', artists:'slide-2024-artists', genre:'slide-2024-genre', minutes:'slide-2024-minutes', end:'slide-2024-end', color:'#FF6B35', textColor:'#fff' },
+    2023: { intro:'slide-2023-intro', tracks:'slide-2023-tracks', artists:'slide-2023-artists', genre:'slide-2023-genre', minutes:'slide-2023-minutes', end:'slide-2023-end', color:'#FF2D55', textColor:'#fff' },
+    2022: { intro:'slide-2022-intro', tracks:'slide-2022-tracks', artists:'slide-2022-artists', genre:'slide-2022-genre', minutes:'slide-2022-minutes', end:'slide-2022-end', color:'#7C3AED', textColor:'#fff' },
+    2021: { intro:'slide-2021-intro', tracks:'slide-2021-tracks', artists:'slide-2021-artists', genre:'slide-2021-genre', minutes:'slide-2021-minutes', end:'slide-2021-end', color:'#1DB954', textColor:'#fff' },
+  };
+  const s = STYLES[year];
+
+  return [
+    // INTRO
+    { cls: s.intro, content: (
+      <div style={{animation:'slideUp 0.5s ease both'}}>
+        <div className="slide-year-badge">{year} WRAPPED</div>
+        {t0 && <img className="slide-img-big" src={t0.album?.images?.[0]?.url||''} alt={t0.name} onError={e=>{e.target.style.display='none';}}/>}
+        <div className="slide-headline">Your year in music starts here</div>
+        <div className="slide-big">{data.profile?.display_name||'Listener'}</div>
+        <div className="slide-sub">Tap to begin →</div>
+        {year===2022 && <div className="monogram" style={{top:-40,left:-40,color:'#fff'}}>{(data.profile?.display_name||'Y')[0]}{(data.profile?.display_name||'YM')[1]||'M'}</div>}
       </div>
-      {breakdown.length>0&&(
-        <div className="decade-bars">
-          {breakdown.map(({decade,count,pct})=>(
-            <div className="decade-row" key={decade}>
-              <span className="decade-label">{decade}</span>
-              <div className="decade-bar-wrap"><div className="decade-bar" style={{width:pct+'%'}}/></div>
-              <span className="decade-count">{count}</span>
+    )},
+    // MINUTES
+    { cls: s.minutes, content: (
+      <div style={{animation:'slideUp 0.5s ease both'}}>
+        <div className="slide-year-badge">{year} WRAPPED</div>
+        <div className="slide-headline">You spent approximately</div>
+        <div className="slide-number" style={{color: year===2021?'#1DB954':year===2023?'#FF9500':'#FFD93D'}}>{mins}</div>
+        <div className="slide-big">minutes listening</div>
+        <div className="slide-sub">Based on your top tracks this period</div>
+      </div>
+    )},
+    // TOP TRACKS
+    { cls: s.tracks, content: (
+      <div style={{width:'100%',animation:'slideUp 0.5s ease both'}}>
+        <div className="slide-year-badge">{year} WRAPPED</div>
+        <div className="slide-headline" style={{marginBottom:12}}>Your top tracks</div>
+        <div className="slide-track-list">
+          {tracks.map((t,i)=>(
+            <div className="slide-track-item" key={t.id}>
+              <span className="slide-track-num">#{i+1}</span>
+              <img className="slide-track-img" src={t.album?.images?.[0]?.url||''} alt={t.name} onError={e=>{e.target.style.display='none';}}/>
+              <div className="slide-track-info">
+                <div className="slide-track-name">{t.name}</div>
+                <div className="slide-track-artist">{(t.artists||[]).map(a=>a.name).join(', ')}</div>
+              </div>
             </div>
           ))}
         </div>
-      )}
+      </div>
+    )},
+    // TOP SONG
+    { cls: s.intro, content: (
+      <div style={{animation:'slideUp 0.5s ease both'}}>
+        <div className="slide-year-badge">{year} WRAPPED</div>
+        <div className="slide-headline">Your #1 song this year</div>
+        {t0 && <img className="slide-img-big" src={t0.album?.images?.[0]?.url||''} alt={t0.name} onError={e=>{e.target.style.display='none';}}/>}
+        <div className="slide-big" style={{fontSize:'clamp(20px,5vw,32px)'}}>{t0?.name||'—'}</div>
+        <div className="slide-sub">{(t0?.artists||[]).map(a=>a.name).join(', ')}</div>
+      </div>
+    )},
+    // TOP ARTISTS
+    { cls: s.artists, content: (
+      <div style={{width:'100%',animation:'slideUp 0.5s ease both'}}>
+        <div className="slide-year-badge">{year} WRAPPED</div>
+        <div className="slide-headline" style={{marginBottom:12}}>Your top artists</div>
+        <div className="slide-artist-grid">
+          {artists.slice(0,4).map((a,i)=>(
+            <div className="slide-artist-item" key={a.id}>
+              <img className="slide-artist-img" src={a.images?.[0]?.url||''} alt={a.name} onError={e=>{e.target.style.display='none';}}/>
+              <div className="slide-artist-name">{a.name}</div>
+              <div className="slide-artist-num">#{i+1}</div>
+            </div>
+          ))}
+        </div>
+        {artists[4] && <div style={{marginTop:10,fontSize:13,opacity:0.6}}>+ {artists[4].name} at #5</div>}
+      </div>
+    )},
+    // TOP ARTIST solo
+    { cls: s.artists, content: (
+      <div style={{animation:'slideUp 0.5s ease both'}}>
+        <div className="slide-year-badge">{year} WRAPPED</div>
+        <div className="slide-headline">You listened to them the most</div>
+        {a0 && <img className="slide-img-big circle" src={a0.images?.[0]?.url||''} alt={a0.name} onError={e=>{e.target.style.display='none';}}/>}
+        <div className="slide-big" style={{fontSize:'clamp(22px,6vw,40px)'}}>{a0?.name||'—'}</div>
+        <div className="slide-sub">Your #1 artist</div>
+      </div>
+    )},
+    // GENRE
+    { cls: s.genre, content: (
+      <div style={{animation:'slideUp 0.5s ease both'}}>
+        <div className="slide-year-badge">{year} WRAPPED</div>
+        <div className="slide-headline">Your sound defined by</div>
+        <div className="slide-genre-pill">{topGenre}</div>
+        <div className="slide-big" style={{fontSize:'clamp(22px,5vw,36px)'}}>{topDecade}</div>
+        <div className="slide-sub">Your dominant era</div>
+        <div style={{marginTop:16,display:'flex',gap:8,flexWrap:'wrap',justifyContent:'center'}}>
+          {genres.slice(1,4).map(g=><span key={g} style={{background:'rgba(255,255,255,0.15)',padding:'4px 12px',borderRadius:100,fontSize:11,fontWeight:700}}>{g}</span>)}
+        </div>
+      </div>
+    )},
+    // END
+    { cls: s.end, content: (
+      <div style={{animation:'popIn 0.5s ease both'}}>
+        <div className="slide-year-badge">{year} WRAPPED</div>
+        <div style={{fontSize:64,marginBottom:16}}>🎉</div>
+        <div className="slide-big">That's your {year}!</div>
+        <div className="slide-sub" style={{marginTop:12}}>Scroll down for your full in-depth stats ↓</div>
+        {year===2023&&<div style={{position:'absolute',inset:0,pointerEvents:'none',overflow:'hidden'}}>
+          {['◯','✦','~','❋'].map((s,i)=><div key={i} style={{position:'absolute',fontSize:40,opacity:0.1,top:`${20+i*20}%`,left:`${10+i*25}%`,animation:'wiggle 3s ease-in-out infinite',animationDelay:`${i*0.5}s`}}>{s}</div>)}
+        </div>}
+      </div>
+    )},
+  ];
+}
+
+function StoryViewer({ data }) {
+  const years = [2024, 2023, 2022, 2021];
+  const [activeYear, setActiveYear] = useState(2024);
+  const [slideIndex, setSlideIndex] = useState(0);
+  const [progress, setProgress] = useState(0);
+  const timerRef = useRef(null);
+  const SLIDE_DURATION = 5000;
+
+  const slides = buildSlides(activeYear, data);
+  const total = slides.length;
+
+  const goNext = () => setSlideIndex(i => Math.min(i+1, total-1));
+  const goPrev = () => setSlideIndex(i => Math.max(i-1, 0));
+
+  useEffect(() => {
+    setProgress(0);
+    clearInterval(timerRef.current);
+    const start = Date.now();
+    timerRef.current = setInterval(() => {
+      const elapsed = Date.now() - start;
+      const pct = Math.min((elapsed / SLIDE_DURATION) * 100, 100);
+      setProgress(pct);
+      if (pct >= 100) {
+        clearInterval(timerRef.current);
+        setSlideIndex(i => {
+          if (i < total - 1) return i + 1;
+          return i;
+        });
+      }
+    }, 50);
+    return () => clearInterval(timerRef.current);
+  }, [slideIndex, activeYear]);
+
+  const handleYearChange = (year) => {
+    setActiveYear(year);
+    setSlideIndex(0);
+    setProgress(0);
+  };
+
+  return (
+    <div className="story-section">
+      <div className="year-tabs">
+        {years.map(y => (
+          <button key={y} data-year={y} className={`year-tab ${activeYear===y?'active':''}`} onClick={()=>handleYearChange(y)}>
+            {y} Wrapped
+          </button>
+        ))}
+      </div>
+
+      <div className="story-viewer" onClick={e => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        if (x < rect.width / 2) goPrev(); else goNext();
+      }}>
+        {/* Progress bars */}
+        <div className="story-progress">
+          {slides.map((_,i) => (
+            <div className="story-progress-bar" key={i}>
+              <div className="story-progress-fill" style={{
+                width: i < slideIndex ? '100%' : i === slideIndex ? `${progress}%` : '0%'
+              }}/>
+            </div>
+          ))}
+        </div>
+
+        {/* Slides */}
+        {slides.map((slide, i) => (
+          <div key={i} className={`story-slide ${slide.cls} ${i===slideIndex?'active':''}`}>
+            <div className="slide-logo">FOREVER WRAPPED</div>
+            {slide.content}
+            <div className="slide-swipe-hint">TAP TO ADVANCE</div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{textAlign:'center',marginTop:12,fontSize:12,color:'var(--text-dim)'}}>
+        {slideIndex+1} / {total} — tap left/right sides to navigate
+      </div>
     </div>
   );
 }
 
-function Dashboard({token,onLogout}){
-  const [timeRange,setTimeRange]=useState('medium_term');
-  const [data,setData]=useState(null);
-  const [loading,setLoading]=useState(true);
-  const [error,setError]=useState(null);
-  const [showCopied,setShowCopied]=useState(false);
-  const load=useCallback(async()=>{
-    setLoading(true);setError(null);setData(null);
-    try{setData(await fetchAllData(token,timeRange));}
-    catch(e){if(e.message==='TOKEN_EXPIRED')onLogout();else setError(e.message);}
-    finally{setLoading(false);}
-  },[token,timeRange]);
-  useEffect(()=>{load();},[load]);
-  if(loading)return <LoadingScreen message="Fetching your music data…"/>;
-  const tracks=data?.tracks||[],artists=data?.artists||[],albums=data?.albums||[];
-  const recent=data?.recentTracks||[],genres=data?.genres||[],profile=data?.profile||{};
+// ── DASHBOARD COMPONENTS ──
+function TimeSelector({value,onChange}){return(<div className="time-selector">{[['short_term','Last 4 Weeks'],['medium_term','Last 6 Months'],['long_term','All Time']].map(([v,l])=>(<button key={v} className={`time-btn ${value===v?'active':''}`} onClick={()=>onChange(v)}>{l}</button>))}</div>);}
+function TrackRow({track,index,showTime}){return(<div className="track-card" onClick={()=>window.open(track.external_urls?.spotify,'_blank')}><span className={`track-rank ${rankClass(index)}`}>#{index+1}</span><img className="track-art" src={track.album?.images?.[0]?.url||''} alt={track.name} onError={e=>{e.target.src='https://via.placeholder.com/52/222/555?text=♪';}}/><div className="track-info"><div className="track-name">{track.name}</div><div className="track-artist">{(track.artists||[]).map(a=>a.name).join(', ')}</div>{showTime&&track.played_at&&<div className="track-meta">{timeAgo(track.played_at)}</div>}</div>{!showTime&&<div className="track-bar-wrap"><div className="track-bar" style={{width:`${track.popularity||60}%`}}/></div>}{showTime&&<span className="badge">RECENT</span>}</div>);}
+function ArtistCard({artist,index}){return(<div className="artist-card" onClick={()=>window.open(artist.external_urls?.spotify,'_blank')}><span className="artist-rank-badge">#{index+1}</span><img className="artist-img" src={artist.images?.[0]?.url||''} alt={artist.name} onError={e=>{e.target.src='https://via.placeholder.com/80/222/555?text=♪';}}/><div className="artist-name">{artist.name}</div><div className="artist-sub">{(artist.genres||[])[0]||'Artist'}</div></div>);}
+function AlbumCard({album}){const year=(album.release_date||'').slice(0,4);return(<div className="album-card" onClick={()=>window.open(album.external_urls?.spotify,'_blank')}><img className="album-img" src={album.images?.[0]?.url||''} alt={album.name} onError={e=>{e.target.src='https://via.placeholder.com/200/222/555?text=♪';}}/><div className="album-name">{album.name}</div><div className="album-artist">{(album.artists||[]).map(a=>a.name).join(', ')}</div>{year&&<div className="album-year">{year}</div>}</div>);}
+function ShowMoreSection({title,items,renderItem,initialCount=5,step=5,containerClass}){const [visible,setVisible]=useState(initialCount);useEffect(()=>{setVisible(initialCount);},[items,initialCount]);const shown=items.slice(0,visible);const remaining=items.length-visible;return(<div className="section-wrap"><div className="section-title">{title}</div><div className={containerClass||'track-list'}>{shown.map((item,i)=>renderItem(item,i))}</div>{remaining>0&&<button className="btn-more" onClick={()=>setVisible(v=>Math.min(v+step,items.length))}>+ Show {Math.min(step,remaining)} more</button>}</div>);}
+function VibeBanner({tracks,genres}){const topDecade=getTopDecade(tracks);const breakdown=getDecadeBreakdown(tracks);const topGenres=genres.slice(0,6);return(<div className="vibe-banner"><div className="vibe-left"><div className="vibe-eyebrow">Your Music Era</div><div className="vibe-value">{topDecade||'Mixed'}</div><div className="vibe-desc">Based on your top track release years</div>{topGenres.length>0?(<><div className="vibe-eyebrow" style={{marginTop:16}}>Top Genres</div><div className="genre-tags">{topGenres.map(g=><span className="genre-tag" key={g}>{g}</span>)}</div></>):(<div className="vibe-desc" style={{marginTop:10,fontStyle:'italic',opacity:0.6}}>Genre data unavailable</div>)}</div>{breakdown.length>0&&(<div className="decade-bars">{breakdown.map(({decade,count,pct})=>(<div className="decade-row" key={decade}><span className="decade-label">{decade}</span><div className="decade-bar-wrap"><div className="decade-bar" style={{width:pct+'%'}}/></div><span className="decade-count">{count}</span></div>))}</div>)}</div>);}
+
+function MainApp({ token, onLogout }) {
+  const [timeRange, setTimeRange] = useState('medium_term');
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [showCopied, setShowCopied] = useState(false);
+
+  const load = useCallback(async () => {
+    setLoading(true); setError(null); setData(null);
+    try { setData(await fetchAllData(token, timeRange)); }
+    catch(e) { if(e.message==='TOKEN_EXPIRED') onLogout(); else setError(e.message); }
+    finally { setLoading(false); }
+  }, [token, timeRange]);
+
+  useEffect(() => { load(); }, [load]);
+  if (loading) return <LoadingScreen message="Fetching your music data…"/>;
+
+  const tracks=data?.tracks||[], artists=data?.artists||[], albums=data?.albums||[];
+  const recent=data?.recentTracks||[], genres=data?.genres||[], profile=data?.profile||{};
   const hasData=tracks.length>0||artists.length>0;
   const topDecade=getTopDecade(tracks);
-  const handleShare=()=>{
-    const text=`🎵 My Forever Wrapped:\n#1 Track: ${tracks[0]?.name||'?'}\n#1 Artist: ${artists[0]?.name||'?'}\nTop Genre: ${genres[0]||'N/A'}\nTop Era: ${topDecade||'Mixed'}\n\nforever-wrapped.onrender.com`;
-    navigator.clipboard.writeText(text).then(()=>{setShowCopied(true);setTimeout(()=>setShowCopied(false),2600);});
-  };
-  const tweetShare=()=>{
-    const text=encodeURIComponent(`🎵 My #ForeverWrapped: Top Artist is ${artists[0]?.name||'?'} — ${genres[0]||'good music'} in the ${topDecade||'past'} 🎶`);
-    window.open(`https://twitter.com/intent/tweet?text=${text}`,'_blank');
-  };
-  return(
-    <div className="dashboard">
-      <div className="dash-header">
+
+  const handleShare=()=>{const text=`🎵 My Forever Wrapped:\n#1 Track: ${tracks[0]?.name||'?'}\n#1 Artist: ${artists[0]?.name||'?'}\nTop Genre: ${genres[0]||'N/A'}\nTop Era: ${topDecade||'Mixed'}\n\nforever-wrapped.onrender.com`;navigator.clipboard.writeText(text).then(()=>{setShowCopied(true);setTimeout(()=>setShowCopied(false),2600);});};
+  const tweetShare=()=>{const text=encodeURIComponent(`🎵 My #ForeverWrapped: Top Artist is ${artists[0]?.name||'?'} — ${genres[0]||'good music'} in the ${topDecade||'past'} 🎶`);window.open(`https://twitter.com/intent/tweet?text=${text}`,'_blank');};
+
+  return (
+    <div>
+      {/* HEADER */}
+      <div style={{maxWidth:1200,margin:'0 auto',padding:'24px 24px 0',display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:12}}>
         <div className="dash-brand"><div className="dash-brand-dot"/><div className="dash-brand-name">Forever<span>Wrapped</span></div></div>
         <div style={{display:'flex',alignItems:'center',gap:12,flexWrap:'wrap'}}>
-          {profile.display_name&&(
-            <div className="user-pill">
-              <img className="user-avatar" src={profile.images?.[0]?.url||''} alt={profile.display_name} onError={e=>{e.target.style.display='none';}}/>
-              <span className="user-name">{profile.display_name}</span>
-            </div>
-          )}
+          {profile.display_name&&(<div className="user-pill"><img className="user-avatar" src={profile.images?.[0]?.url||''} alt={profile.display_name} onError={e=>{e.target.style.display='none';}}/><span className="user-name">{profile.display_name}</span></div>)}
           <button className="btn-logout" onClick={onLogout}>Sign out</button>
         </div>
       </div>
-      <TimeSelector value={timeRange} onChange={setTimeRange}/>
-      {error&&<div className="error-card">⚠️ {error} <button onClick={load} style={{background:'none',border:'none',color:'inherit',cursor:'pointer',textDecoration:'underline',marginLeft:8}}>Retry</button></div>}
-      {!error&&!hasData&&(
-        <div className="empty-state">
-          <div className="emoji">🎵</div><h2>Not enough listening history</h2>
-          <p>Try <strong>All Time</strong> or listen to more music and check back!</p>
-          <div className="time-selector" style={{justifyContent:'center',marginTop:24}}>
-            {[['short_term','Last 4 Weeks'],['medium_term','Last 6 Months'],['long_term','All Time']].map(([v,l])=>(
-              <button key={v} className={`time-btn ${timeRange===v?'active':''}`} onClick={()=>setTimeRange(v)}>{l}</button>
-            ))}
-          </div>
-        </div>
+
+      {error&&<div style={{maxWidth:1200,margin:'16px auto',padding:'0 24px'}}><div className="error-card">⚠️ {error} <button onClick={load} style={{background:'none',border:'none',color:'inherit',cursor:'pointer',textDecoration:'underline',marginLeft:8}}>Retry</button></div></div>}
+
+      {!error && !hasData && (
+        <div className="empty-state"><div className="emoji">🎵</div><h2>Not enough listening history</h2><p>Try <strong>All Time</strong> or listen to more music!</p></div>
       )}
-      {!error&&hasData&&(
+
+      {!error && hasData && (
         <>
-          <div className="hero-section">
-            <div className="hero-card">
-              <div className="hero-label">🎵 Top Track</div>
-              {tracks[0]&&<><img className="hero-img" src={tracks[0].album?.images?.[0]?.url||''} alt={tracks[0].name} onError={e=>{e.target.src='https://via.placeholder.com/72/222/555?text=♪';}}/>
-              <div className="hero-value">{tracks[0].name}</div><div className="hero-meta">{(tracks[0].artists||[]).map(a=>a.name).join(', ')}</div></>}
-            </div>
-            <div className="hero-card">
-              <div className="hero-label">🎤 Top Artist</div>
-              {artists[0]&&<><img className="hero-img circle" src={artists[0].images?.[0]?.url||''} alt={artists[0].name} onError={e=>{e.target.src='https://via.placeholder.com/72/222/555?text=♪';}}/>
-              <div className="hero-value">{artists[0].name}</div><div className="hero-meta">{genres[0]||'Artist'}</div></>}
-            </div>
-            <div className="hero-card">
-              <div className="hero-label">💿 Top Album</div>
-              {albums[0]&&<><img className="hero-img" src={albums[0].images?.[0]?.url||''} alt={albums[0].name} onError={e=>{e.target.src='https://via.placeholder.com/72/222/555?text=♪';}}/>
-              <div className="hero-value">{albums[0].name}</div><div className="hero-meta">{(albums[0].artists||[]).map(a=>a.name).join(', ')}</div></>}
-            </div>
+          {/* STORY EXPERIENCE */}
+          <StoryViewer data={data}/>
+
+          {/* DIVIDER */}
+          <div className="scroll-divider">
+            <div className="scroll-divider-line"/>
+            <div className="scroll-divider-text">Your full stats below</div>
+            <div className="scroll-divider-line"/>
           </div>
-          <div className="stats-row">
-            <div className="stat-block"><span className="stat-icon">🎵</span><div className="stat-number">{tracks.length}</div><div className="stat-label">Top tracks</div></div>
-            <div className="stat-block"><span className="stat-icon">🎤</span><div className="stat-number">{artists.length}</div><div className="stat-label">Top artists</div></div>
-            <div className="stat-block"><span className="stat-icon">📅</span><div className="stat-number">{topDecade||'—'}</div><div className="stat-label">Your top era</div></div>
-          </div>
-          <VibeBanner tracks={tracks} genres={genres}/>
-          <ShowMoreSection title="Top Tracks" items={tracks} initialCount={5} step={5} containerClass="track-list"
-            renderItem={(t,i)=><TrackRow key={t.id} track={t} index={i} showTime={false}/>}/>
-          <ShowMoreSection title="Top Artists" items={artists} initialCount={5} step={5} containerClass="artists-grid"
-            renderItem={(a,i)=><ArtistCard key={a.id} artist={a} index={i}/>}/>
-          <ShowMoreSection title="Top Albums" items={albums} initialCount={5} step={5} containerClass="albums-flex"
-            renderItem={(a,i)=><AlbumCard key={a.id} album={a} index={i}/>}/>
-          {recent.length>0&&(
-            <ShowMoreSection title="Recently Played" items={recent} initialCount={5} step={5} containerClass="track-list"
-              renderItem={(t,i)=><TrackRow key={t.id+'-'+i} track={t} index={i} showTime={true}/>}/>
-          )}
-          <div className="share-section">
-            <div className="share-text"><h3>Share your Wrapped</h3><p>Let the world know what you've been listening to</p></div>
-            <div className="share-buttons">
-              <button className="btn-share twitter" onClick={tweetShare}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.741l7.73-8.835L1.254 2.25H8.08l4.264 5.633 5.9-5.633zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                Tweet
-              </button>
-              <button className="btn-share copy" onClick={handleShare}>📋 Copy Stats</button>
+          <div className="scroll-arrow">↓</div>
+
+          {/* FULL DASHBOARD */}
+          <div className="dashboard" style={{paddingTop:0}}>
+            <TimeSelector value={timeRange} onChange={setTimeRange}/>
+
+            <div className="hero-section">
+              <div className="hero-card">
+                <div className="hero-label">🎵 Top Track</div>
+                {tracks[0]&&<><img className="hero-img" src={tracks[0].album?.images?.[0]?.url||''} alt={tracks[0].name} onError={e=>{e.target.src='https://via.placeholder.com/72/222/555?text=♪';}}/><div className="hero-value">{tracks[0].name}</div><div className="hero-meta">{(tracks[0].artists||[]).map(a=>a.name).join(', ')}</div></>}
+              </div>
+              <div className="hero-card">
+                <div className="hero-label">🎤 Top Artist</div>
+                {artists[0]&&<><img className="hero-img circle" src={artists[0].images?.[0]?.url||''} alt={artists[0].name} onError={e=>{e.target.src='https://via.placeholder.com/72/222/555?text=♪';}}/><div className="hero-value">{artists[0].name}</div><div className="hero-meta">{genres[0]||'Artist'}</div></>}
+              </div>
+              <div className="hero-card">
+                <div className="hero-label">💿 Top Album</div>
+                {albums[0]&&<><img className="hero-img" src={albums[0].images?.[0]?.url||''} alt={albums[0].name} onError={e=>{e.target.src='https://via.placeholder.com/72/222/555?text=♪';}}/><div className="hero-value">{albums[0].name}</div><div className="hero-meta">{(albums[0].artists||[]).map(a=>a.name).join(', ')}</div></>}
+              </div>
+            </div>
+
+            <div className="stats-row">
+              <div className="stat-block"><span className="stat-icon">🎵</span><div className="stat-number">{tracks.length}</div><div className="stat-label">Top tracks</div></div>
+              <div className="stat-block"><span className="stat-icon">🎤</span><div className="stat-number">{artists.length}</div><div className="stat-label">Top artists</div></div>
+              <div className="stat-block"><span className="stat-icon">⏱</span><div className="stat-number">{fmtMinutes(data.estMinutes)}</div><div className="stat-label">Est. minutes</div></div>
+            </div>
+
+            <VibeBanner tracks={tracks} genres={genres}/>
+
+            <ShowMoreSection title="Top Tracks" items={tracks} initialCount={5} step={5} containerClass="track-list"
+              renderItem={(t,i)=><TrackRow key={t.id} track={t} index={i} showTime={false}/>}/>
+            <ShowMoreSection title="Top Artists" items={artists} initialCount={5} step={5} containerClass="artists-grid"
+              renderItem={(a,i)=><ArtistCard key={a.id} artist={a} index={i}/>}/>
+            <ShowMoreSection title="Top Albums" items={albums} initialCount={5} step={5} containerClass="albums-flex"
+              renderItem={(a,i)=><AlbumCard key={a.id} album={a} index={i}/>}/>
+            {recent.length>0&&(
+              <ShowMoreSection title="Recently Played" items={recent} initialCount={5} step={5} containerClass="track-list"
+                renderItem={(t,i)=><TrackRow key={t.id+'-'+i} track={t} index={i} showTime={true}/>}/>
+            )}
+
+            <div className="share-section">
+              <div className="share-text"><h3>Share your Wrapped</h3><p>Let the world know what you've been listening to</p></div>
+              <div className="share-buttons">
+                <button className="btn-share twitter" onClick={tweetShare}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.741l7.73-8.835L1.254 2.25H8.08l4.264 5.633 5.9-5.633zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                  Tweet
+                </button>
+                <button className="btn-share copy" onClick={handleShare}>📋 Copy Stats</button>
+              </div>
             </div>
           </div>
         </>
@@ -523,14 +716,9 @@ function App(){
     <div id="app">
       <div className="bg-orbs"><div className="orb orb1"/><div className="orb orb2"/><div className="orb orb3"/></div>
       {loading&&<LoadingScreen message="Connecting to Spotify…"/>}
-      {error&&!loading&&(
-        <div className="login-screen">
-          <div className="error-card" style={{maxWidth:440}}>⚠️ {error}</div>
-          <button className="btn-login" style={{marginTop:24}} onClick={()=>{setError(null);localStorage.clear();}}>Try Again</button>
-        </div>
-      )}
+      {error&&!loading&&(<div className="login-screen"><div className="error-card" style={{maxWidth:440}}>⚠️ {error}</div><button className="btn-login" style={{marginTop:24}} onClick={()=>{setError(null);localStorage.clear();}}>Try Again</button></div>)}
       {!loading&&!error&&!token&&<LoginScreen/>}
-      {!loading&&!error&&token&&<Dashboard token={token} onLogout={()=>{sessionStorage.removeItem('spotify_token');setToken(null);}}/>}
+      {!loading&&!error&&token&&<MainApp token={token} onLogout={()=>{sessionStorage.removeItem('spotify_token');setToken(null);}}/>}
       <div id="debug-bar" className="debug-bar">🎵 Ready</div>
     </div>
   );
