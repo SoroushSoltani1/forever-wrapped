@@ -4,13 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Forever Wrapped</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&family=Space+Mono:wght@400;700&family=Circular+Std:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,600;0,700;0,900;1,300;1,400;1,600;1,700;1,900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
       --green: #1DB954; --black: #0a0a0a; --surface: #111111; --surface2: #1a1a1a; --surface3: #222222;
       --border: rgba(255,255,255,0.07); --text: #ffffff; --text-muted: #a0a0a0; --text-dim: #555555;
       --accent1: #FF6B6B; --accent2: #FFD93D; --accent3: #6BCB77; --accent4: #4D96FF;
+      --w25-cream: #F0EDE4; --w25-black: #0D0D0D; --w25-yellow: #D4E84A; --w25-blue: #5B6BF5;
+      --w25-red: #E8312A; --w25-green: #3CB043; --w25-purple: #8B7FE8;
       --radius: 16px; --font-display: 'Montserrat', sans-serif; --font-mono: 'Space Mono', monospace;
     }
     body { background: var(--black); color: var(--text); font-family: var(--font-display); min-height: 100vh; overflow-x: hidden; }
@@ -26,11 +28,10 @@
     @keyframes barBounce { 0%,100%{transform:scaleY(0.5);opacity:0.4;}50%{transform:scaleY(1);opacity:1;} }
     @keyframes pulseGlow { 0%,100%{box-shadow:0 0 60px rgba(29,185,84,0.4);}50%{box-shadow:0 0 100px rgba(29,185,84,0.7);} }
     @keyframes toastIn { 0%{opacity:0;transform:translateX(-50%) translateY(20px);}15%,75%{opacity:1;transform:translateX(-50%) translateY(0);}100%{opacity:0;transform:translateX(-50%) translateY(-10px);} }
-    @keyframes slideUp { from{opacity:0;transform:translateY(40px);}to{opacity:1;transform:translateY(0);} }
-    @keyframes popIn { 0%{opacity:0;transform:scale(0.8);}100%{opacity:1;transform:scale(1);} }
-    @keyframes wiggle { 0%,100%{transform:rotate(-2deg);}50%{transform:rotate(2deg);} }
+    @keyframes slideUp { from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);} }
+    @keyframes popIn { 0%{opacity:0;transform:scale(0.85);}100%{opacity:1;transform:scale(1);} }
 
-    /* ── LOGIN ── */
+    /* LOGIN */
     .login-screen { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;text-align:center;animation:fadeIn 0.8s ease both; }
     .logo-mark { width:80px;height:80px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 32px;animation:pulseGlow 3s ease-in-out infinite; }
     .logo-mark svg { width:44px;height:44px;fill:var(--black); }
@@ -43,210 +44,314 @@
     .feature-pill { display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);padding:10px 18px;border-radius:100px;font-size:13px;color:var(--text-muted); }
     .feature-pill .dot { width:6px;height:6px;border-radius:50%;background:var(--green); }
 
-    /* ── YEAR STORY EXPERIENCE ── */
-    .story-section { position: relative; }
+    /* YEAR TABS */
+    .story-section { position:relative; }
     .year-tabs { display:flex;gap:8px;padding:24px 24px 0;max-width:1200px;margin:0 auto;flex-wrap:wrap; }
     .year-tab { background:var(--surface2);border:2px solid var(--border);color:var(--text-muted);font-family:var(--font-display);font-size:13px;font-weight:700;padding:8px 20px;border-radius:100px;cursor:pointer;transition:all 0.2s; }
-    .year-tab.active { color:var(--black);border-color:transparent; }
-    .year-tab[data-year="2024"].active { background:#FF6B35; }
-    .year-tab[data-year="2023"].active { background:#FF2D55; }
-    .year-tab[data-year="2022"].active { background:#8B5CF6; }
-    .year-tab[data-year="2021"].active { background:#1DB954; }
+    .year-tab.active { color:#000;border-color:transparent; }
+    .year-tab[data-year="2025"].active { background:var(--w25-yellow); }
+    .year-tab[data-year="2024"].active { background:#FF6B35;color:#fff; }
+    .year-tab[data-year="2023"].active { background:#FF2D55;color:#fff; }
+    .year-tab[data-year="2022"].active { background:#8B5CF6;color:#fff; }
+    .year-tab[data-year="2021"].active { background:#1DB954;color:#000; }
 
-    /* Story viewer */
-    .story-viewer {
-      position: relative;
-      width: 100%;
-      max-width: 420px;
-      margin: 24px auto 0;
-      border-radius: 28px;
-      overflow: hidden;
-      aspect-ratio: 9/16;
-      cursor: pointer;
-      user-select: none;
-    }
-    .story-progress { display:flex;gap:4px;position:absolute;top:16px;left:16px;right:16px;z-index:10; }
-    .story-progress-bar { flex:1;height:3px;background:rgba(255,255,255,0.3);border-radius:2px;overflow:hidden; }
-    .story-progress-fill { height:100%;background:#fff;border-radius:2px;transition:width 0.1s linear; }
-    .story-nav { position:absolute;inset:0;display:flex;z-index:9; }
-    .story-nav-left { flex:1; }
-    .story-nav-right { flex:1; }
-
-    /* Slide base */
-    .story-slide { position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 28px 40px;text-align:center;transition:opacity 0.3s;opacity:0;pointer-events:none; }
+    /* STORY VIEWER */
+    .story-viewer { position:relative;width:100%;max-width:390px;margin:24px auto 0;border-radius:0;overflow:hidden;aspect-ratio:9/16;cursor:pointer;user-select:none; }
+    .story-progress { display:flex;gap:4px;position:absolute;top:14px;left:14px;right:14px;z-index:10; }
+    .story-progress-bar { flex:1;height:3px;background:rgba(0,0,0,0.2);border-radius:2px;overflow:hidden; }
+    .story-progress-fill { height:100%;border-radius:2px;transition:width 0.1s linear; }
+    .story-slide { position:absolute;inset:0;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;transition:opacity 0.25s;opacity:0;pointer-events:none;overflow:hidden; }
     .story-slide.active { opacity:1;pointer-events:auto; }
-    .slide-logo { position:absolute;top:32px;left:50%;transform:translateX(-50%);font-size:11px;font-weight:700;letter-spacing:3px;opacity:0.8; }
 
-    /* 2024 Style — sleek gradient, bold white type */
-    .slide-2024-intro { background:linear-gradient(160deg,#0a0a0a 0%,#1a1a2e 50%,#16213e 100%); }
-    .slide-2024-intro .big-number { font-size:clamp(80px,20vw,160px);font-weight:900;letter-spacing:-8px;line-height:0.85;background:linear-gradient(135deg,#FF6B35,#FFD93D);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text; }
-    .slide-2024-tracks { background:linear-gradient(160deg,#0d0d0d,#1a0a2e); }
-    .slide-2024-artists { background:linear-gradient(160deg,#0a1a0a,#0d2b1a); }
-    .slide-2024-genre { background:linear-gradient(160deg,#1a0a0a,#2b1a0d); }
-    .slide-2024-minutes { background:linear-gradient(160deg,#0a0a1a,#1a0a2e); }
-    .slide-2024-end { background:linear-gradient(160deg,#0a0a0a,#1DB954 200%); }
+    /* ── 2025 SLIDE STYLES ── */
 
-    /* 2023 Style — fiery red/rose/mint chaos */
-    .slide-2023-intro { background:#FF2D55; }
-    .slide-2023-tracks { background:#000000;border:none; }
-    .slide-2023-artists { background:#00C4A7; }
-    .slide-2023-genre { background:#FF2D55; }
-    .slide-2023-minutes { background:#000000; }
-    .slide-2023-end { background:#FF9500; }
-    .squiggle { position:absolute;opacity:0.15;pointer-events:none; }
+    /* Slide 1: INTRO — cream, "2025" vertical yellow left strip, checkerboard top */
+    .s25-intro {
+      background: var(--w25-cream);
+      color: var(--w25-black);
+      font-family: var(--font-display);
+    }
+    .s25-intro-strip {
+      position:absolute; left:0; top:0; bottom:0; width:56px;
+      background:var(--w25-black);
+      display:flex; align-items:center; justify-content:center;
+      overflow:hidden;
+    }
+    .s25-year-vertical {
+      font-size:72px; font-weight:900; letter-spacing:-4px; line-height:1;
+      writing-mode:vertical-rl; transform:rotate(180deg);
+      color:var(--w25-yellow); font-style:italic;
+    }
+    .s25-intro-checker {
+      position:absolute; top:0; left:56px; right:0; height:120px;
+      background-image: repeating-conic-gradient(var(--w25-black) 0% 25%, var(--w25-cream) 0% 50%);
+      background-size:24px 24px;
+      opacity:0.9;
+    }
+    .s25-intro-body {
+      position:absolute; top:0; left:56px; right:0; bottom:0;
+      padding:130px 20px 24px;
+      display:flex; flex-direction:column; justify-content:space-between;
+    }
+    .s25-intro-genres { display:flex;flex-direction:column;gap:2px; }
+    .s25-genre-huge { font-size:52px;font-weight:900;line-height:0.95;letter-spacing:-2px;color:var(--w25-black); }
+    .s25-genre-large { font-size:36px;font-weight:900;line-height:1;letter-spacing:-1px;color:var(--w25-black); }
+    .s25-genre-med { font-size:26px;font-weight:700;line-height:1.1;color:var(--w25-black); }
+    .s25-genre-small { font-size:18px;font-weight:600;line-height:1.2;color:var(--w25-black); }
+    .s25-genre-tiny { font-size:13px;font-weight:600;line-height:1.3;color:var(--w25-black); }
+    .s25-intro-bottom { display:flex;justify-content:space-between;align-items:flex-end; }
+    .s25-intro-col { display:flex;flex-direction:column;gap:2px; }
+    .s25-col-label { font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#888;margin-bottom:2px; }
+    .s25-col-item { font-size:10px;font-weight:600;color:var(--w25-black);line-height:1.4; }
+    .s25-stat-big { font-size:22px;font-weight:900;color:var(--w25-black); }
+    .s25-stat-label { font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#888; }
 
-    /* 2022 Style — monogram shapes, vibrant gradients */
-    .slide-2022-intro { background:linear-gradient(135deg,#7C3AED,#EC4899); }
-    .slide-2022-tracks { background:linear-gradient(135deg,#059669,#0891B2); }
-    .slide-2022-artists { background:linear-gradient(135deg,#DC2626,#7C3AED); }
-    .slide-2022-genre { background:linear-gradient(135deg,#D97706,#DC2626); }
-    .slide-2022-minutes { background:linear-gradient(135deg,#0891B2,#7C3AED); }
-    .slide-2022-end { background:linear-gradient(135deg,#059669,#7C3AED); }
+    /* Slide 2: TOP GENRES — cream, italic title, stacked huge genres */
+    .s25-genres {
+      background:var(--w25-cream); color:var(--w25-black); padding:48px 28px 32px;
+      display:flex; flex-direction:column; justify-content:space-between;
+    }
+    .s25-slide-title { font-size:14px;font-weight:700;font-style:italic;color:var(--w25-black);margin-bottom:20px;letter-spacing:0; }
+    .s25-genres-list { display:flex;flex-direction:column;gap:4px;flex:1;justify-content:center; }
+    .s25-genre-row { display:flex;align-items:baseline;gap:8px; }
+    .s25-genre-num { font-size:11px;font-weight:700;color:#999;min-width:16px; }
 
-    /* 2021 Style — bold black/white/green minimal */
-    .slide-2021-intro { background:#000000; }
-    .slide-2021-tracks { background:#121212; }
-    .slide-2021-artists { background:#000000; }
-    .slide-2021-genre { background:#1DB954; }
-    .slide-2021-minutes { background:#121212; }
-    .slide-2021-end { background:#000000; }
+    /* Slide 3: TOP ALBUMS — cream, 2x2 grid + list */
+    .s25-albums {
+      background:var(--w25-cream); color:var(--w25-black); padding:48px 24px 28px;
+      display:flex; flex-direction:column;
+    }
+    .s25-albums-grid { display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:16px 0 12px; }
+    .s25-album-square { aspect-ratio:1/1;background:#ccc;border-radius:4px;overflow:hidden; }
+    .s25-album-square img { width:100%;height:100%;object-fit:cover;display:block; }
+    .s25-albums-list { display:flex;flex-direction:column;gap:6px; }
+    .s25-album-row { display:flex;align-items:center;gap:10px; }
+    .s25-album-num { font-size:11px;font-weight:700;color:#999;min-width:14px; }
+    .s25-album-info { display:flex;flex-direction:column; }
+    .s25-album-name { font-size:12px;font-weight:700;color:var(--w25-black);line-height:1.2; }
+    .s25-album-artist { font-size:10px;color:#666;font-weight:500; }
 
-    /* Slide content components */
-    .slide-year-badge { font-size:11px;font-weight:700;letter-spacing:3px;opacity:0.6;margin-bottom:16px;text-transform:uppercase; }
-    .slide-headline { font-size:clamp(14px,3.5vw,18px);font-weight:300;line-height:1.5;margin-bottom:8px;opacity:0.8; }
-    .slide-big { font-size:clamp(36px,9vw,56px);font-weight:900;letter-spacing:-2px;line-height:1;margin-bottom:12px; }
-    .slide-sub { font-size:clamp(13px,3vw,15px);font-weight:300;opacity:0.7;line-height:1.4; }
-    .slide-number { font-size:clamp(64px,18vw,120px);font-weight:900;letter-spacing:-6px;line-height:0.9;margin-bottom:8px; }
-    .slide-track-list { width:100%;text-align:left;display:flex;flex-direction:column;gap:10px;margin-top:8px; }
-    .slide-track-item { display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.1);border-radius:12px;padding:10px 12px; }
-    .slide-track-num { font-family:var(--font-mono);font-size:12px;font-weight:700;opacity:0.5;min-width:20px; }
-    .slide-track-img { width:40px;height:40px;border-radius:6px;object-fit:cover;flex-shrink:0;background:rgba(255,255,255,0.1); }
-    .slide-track-info { flex:1;min-width:0; }
-    .slide-track-name { font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
-    .slide-track-artist { font-size:11px;opacity:0.6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
-    .slide-artist-grid { display:grid;grid-template-columns:repeat(2,1fr);gap:10px;width:100%;margin-top:8px; }
-    .slide-artist-item { display:flex;flex-direction:column;align-items:center;gap:8px;background:rgba(255,255,255,0.1);border-radius:14px;padding:14px 10px; }
-    .slide-artist-img { width:56px;height:56px;border-radius:50%;object-fit:cover;background:rgba(255,255,255,0.1); }
-    .slide-artist-name { font-size:12px;font-weight:700;text-align:center;line-height:1.2; }
-    .slide-artist-num { font-size:10px;opacity:0.5;font-family:var(--font-mono); }
-    .slide-genre-pill { display:inline-block;background:rgba(255,255,255,0.2);border:2px solid rgba(255,255,255,0.4);font-size:clamp(18px,5vw,28px);font-weight:900;padding:12px 28px;border-radius:100px;margin-bottom:16px;letter-spacing:-0.5px; }
-    .slide-swipe-hint { position:absolute;bottom:20px;font-size:11px;opacity:0.4;letter-spacing:1px; }
-    .slide-img-big { width:140px;height:140px;border-radius:20px;object-fit:cover;margin-bottom:16px;box-shadow:0 20px 60px rgba(0,0,0,0.5); }
-    .slide-img-big.circle { border-radius:50%; }
-    .monogram { position:absolute;font-size:200px;font-weight:900;opacity:0.06;letter-spacing:-20px;pointer-events:none;line-height:1; }
+    /* Slide 4: TOP ARTISTS — black, arcs bg, list with photo chips */
+    .s25-artists {
+      background:var(--w25-black); color:var(--w25-cream); padding:48px 28px 32px;
+      display:flex; flex-direction:column;
+    }
+    .s25-arcs {
+      position:absolute; bottom:-20px; right:-40px; width:280px; height:280px;
+      pointer-events:none;
+    }
+    .s25-artists-list { display:flex;flex-direction:column;gap:14px;flex:1;justify-content:center; }
+    .s25-artist-row { display:flex;align-items:center;gap:12px; }
+    .s25-artist-num { font-size:11px;font-weight:700;color:#666;min-width:16px; }
+    .s25-artist-chip { display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.06);border-radius:100px;padding:6px 14px 6px 6px; }
+    .s25-artist-chip-img { width:36px;height:36px;border-radius:50%;object-fit:cover;background:#333;flex-shrink:0; }
+    .s25-artist-chip-name { font-size:14px;font-weight:700;color:var(--w25-cream);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px; }
+    .s25-artist-top-badge { font-size:9px;font-weight:700;letter-spacing:1px;color:var(--w25-yellow);text-transform:uppercase;margin-bottom:2px; }
+
+    /* Slide 5: TOP ARTIST — black, big circle, arcs */
+    .s25-top-artist {
+      background:var(--w25-black); color:var(--w25-cream);
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      padding:48px 28px 40px; text-align:center;
+    }
+    .s25-big-circle { width:200px;height:200px;border-radius:50%;object-fit:cover;background:#222;margin-bottom:24px;position:relative;z-index:2; }
+    .s25-arcs-center { position:absolute;width:100%;height:100%;pointer-events:none;top:0;left:0; }
+    .s25-top-artist-label { font-size:13px;font-style:italic;font-weight:600;color:#888;margin-bottom:8px; }
+    .s25-top-artist-name { font-size:clamp(28px,7vw,44px);font-weight:900;line-height:1;letter-spacing:-2px;color:var(--w25-cream); }
+    .s25-top-artist-mins { font-size:12px;color:#666;margin-top:10px; }
+
+    /* Slide 6: TOP SONGS — split: checker top, cream bottom */
+    .s25-songs {
+      background:var(--w25-cream); color:var(--w25-black);
+      display:flex; flex-direction:column;
+    }
+    .s25-songs-checker { height:100px;flex-shrink:0;background-image:repeating-conic-gradient(var(--w25-black) 0% 25%,var(--w25-cream) 0% 50%);background-size:20px 20px; }
+    .s25-songs-body { flex:1;padding:20px 28px 28px;display:flex;flex-direction:column; }
+    .s25-songs-list { display:flex;flex-direction:column;gap:10px;flex:1;justify-content:center; }
+    .s25-song-row { display:flex;align-items:center;gap:12px; }
+    .s25-song-num { font-size:11px;font-weight:700;color:#999;min-width:16px; }
+    .s25-song-img { width:44px;height:44px;border-radius:4px;object-fit:cover;background:#ddd;flex-shrink:0; }
+    .s25-song-info { flex:1;min-width:0; }
+    .s25-song-name { font-size:13px;font-weight:700;color:var(--w25-black);white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+    .s25-song-artist { font-size:11px;color:#666;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+
+    /* Slide 7: LISTENING AGE — cream, big purple number */
+    .s25-age {
+      background:var(--w25-cream); color:var(--w25-black); padding:48px 28px 40px;
+      display:flex; flex-direction:column; justify-content:center;
+    }
+    .s25-big-purple { font-size:clamp(100px,28vw,160px);font-weight:900;line-height:0.85;letter-spacing:-8px;color:var(--w25-purple); }
+    .s25-age-sub { font-size:15px;font-weight:500;color:#555;margin-top:16px;line-height:1.5; }
+    .s25-age-era { font-weight:700;color:var(--w25-black); }
+
+    /* Slide 8: MINUTES — black, big purple number */
+    .s25-minutes {
+      background:var(--w25-black); color:var(--w25-cream); padding:48px 28px 40px;
+      display:flex; flex-direction:column; justify-content:center;
+    }
+    .s25-minutes-num { font-size:clamp(56px,16vw,96px);font-weight:900;line-height:0.9;letter-spacing:-4px;color:var(--w25-purple); }
+    .s25-minutes-sub { font-size:14px;color:#888;margin-top:12px; }
+
+    /* Slide 9: END — cream/black split */
+    .s25-end {
+      background:var(--w25-black); color:var(--w25-cream);
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      text-align:center; padding:40px 28px;
+    }
+    .s25-end-year { font-size:120px;font-weight:900;letter-spacing:-8px;line-height:0.85;font-style:italic;color:var(--w25-yellow); }
+    .s25-end-sub { font-size:18px;font-weight:600;margin-top:20px;color:var(--w25-cream); }
+    .s25-end-hint { font-size:12px;color:#555;margin-top:12px; }
+
+    /* shared 2025 slide header */
+    .s25-header { font-size:13px;font-weight:700;font-style:italic;margin-bottom:16px;color:inherit;opacity:0.7; }
+
+    /* Other year slides (kept from before) */
+    .slide-2024-intro{background:linear-gradient(160deg,#0a0a0a 0%,#1a1a2e 50%,#16213e 100%);}
+    .slide-2024-tracks{background:linear-gradient(160deg,#0d0d0d,#1a0a2e);}
+    .slide-2024-artists{background:linear-gradient(160deg,#0a1a0a,#0d2b1a);}
+    .slide-2024-genre{background:linear-gradient(160deg,#1a0a0a,#2b1a0d);}
+    .slide-2024-minutes{background:linear-gradient(160deg,#0a0a1a,#1a0a2e);}
+    .slide-2024-end{background:linear-gradient(160deg,#0a0a0a,#1DB954 200%);}
+    .slide-2023-intro{background:#FF2D55;}.slide-2023-tracks{background:#000000;}.slide-2023-artists{background:#00C4A7;}.slide-2023-genre{background:#FF2D55;}.slide-2023-minutes{background:#000000;}.slide-2023-end{background:#FF9500;}
+    .slide-2022-intro{background:linear-gradient(135deg,#7C3AED,#EC4899);}.slide-2022-tracks{background:linear-gradient(135deg,#059669,#0891B2);}.slide-2022-artists{background:linear-gradient(135deg,#DC2626,#7C3AED);}.slide-2022-genre{background:linear-gradient(135deg,#D97706,#DC2626);}.slide-2022-minutes{background:linear-gradient(135deg,#0891B2,#7C3AED);}.slide-2022-end{background:linear-gradient(135deg,#059669,#7C3AED);}
+    .slide-2021-intro{background:#000000;}.slide-2021-tracks{background:#121212;}.slide-2021-artists{background:#000000;}.slide-2021-genre{background:#1DB954;}.slide-2021-minutes{background:#121212;}.slide-2021-end{background:#000000;}
+
+    .story-slide.generic { display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 28px 40px;text-align:center; }
+    .slide-year-badge{font-size:11px;font-weight:700;letter-spacing:3px;opacity:0.6;margin-bottom:16px;text-transform:uppercase;}
+    .slide-headline{font-size:clamp(14px,3.5vw,18px);font-weight:300;line-height:1.5;margin-bottom:8px;opacity:0.8;}
+    .slide-big{font-size:clamp(36px,9vw,56px);font-weight:900;letter-spacing:-2px;line-height:1;margin-bottom:12px;}
+    .slide-sub{font-size:clamp(13px,3vw,15px);font-weight:300;opacity:0.7;line-height:1.4;}
+    .slide-number{font-size:clamp(64px,18vw,120px);font-weight:900;letter-spacing:-6px;line-height:0.9;margin-bottom:8px;}
+    .slide-track-list{width:100%;text-align:left;display:flex;flex-direction:column;gap:10px;margin-top:8px;}
+    .slide-track-item{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.1);border-radius:12px;padding:10px 12px;}
+    .slide-track-num{font-family:var(--font-mono);font-size:12px;font-weight:700;opacity:0.5;min-width:20px;}
+    .slide-track-img{width:40px;height:40px;border-radius:6px;object-fit:cover;flex-shrink:0;background:rgba(255,255,255,0.1);}
+    .slide-track-info{flex:1;min-width:0;}
+    .slide-track-name{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .slide-track-artist{font-size:11px;opacity:0.6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .slide-artist-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;width:100%;margin-top:8px;}
+    .slide-artist-item{display:flex;flex-direction:column;align-items:center;gap:8px;background:rgba(255,255,255,0.1);border-radius:14px;padding:14px 10px;}
+    .slide-artist-img{width:56px;height:56px;border-radius:50%;object-fit:cover;background:rgba(255,255,255,0.1);}
+    .slide-artist-name{font-size:12px;font-weight:700;text-align:center;line-height:1.2;}
+    .slide-artist-num{font-size:10px;opacity:0.5;font-family:var(--font-mono);}
+    .slide-genre-pill{display:inline-block;background:rgba(255,255,255,0.2);border:2px solid rgba(255,255,255,0.4);font-size:clamp(18px,5vw,28px);font-weight:900;padding:12px 28px;border-radius:100px;margin-bottom:16px;letter-spacing:-0.5px;}
+    .slide-img-big{width:140px;height:140px;border-radius:20px;object-fit:cover;margin-bottom:16px;box-shadow:0 20px 60px rgba(0,0,0,0.5);}
+    .slide-img-big.circle{border-radius:50%;}
+    .monogram{position:absolute;font-size:200px;font-weight:900;opacity:0.06;letter-spacing:-20px;pointer-events:none;line-height:1;}
+    .slide-swipe-hint{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);font-size:11px;opacity:0.35;letter-spacing:1px;white-space:nowrap;}
 
     /* Scroll divider */
-    .scroll-divider { max-width:1200px;margin:48px auto 0;padding:0 24px;display:flex;align-items:center;gap:16px; }
-    .scroll-divider-line { flex:1;height:1px;background:var(--border); }
-    .scroll-divider-text { font-size:12px;font-weight:700;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;white-space:nowrap; }
-    .scroll-arrow { text-align:center;padding:8px 0 32px;font-size:24px;animation:bounce 2s ease-in-out infinite; }
-    @keyframes bounce { 0%,100%{transform:translateY(0);}50%{transform:translateY(6px);} }
+    .scroll-divider{max-width:1200px;margin:48px auto 0;padding:0 24px;display:flex;align-items:center;gap:16px;}
+    .scroll-divider-line{flex:1;height:1px;background:var(--border);}
+    .scroll-divider-text{font-size:12px;font-weight:700;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;white-space:nowrap;}
+    .scroll-arrow{text-align:center;padding:8px 0 32px;font-size:24px;animation:bounce 2s ease-in-out infinite;}
+    @keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(6px);}}
 
-    /* ── DASHBOARD ── */
-    .dashboard { max-width:1200px;margin:0 auto;padding:40px 24px 100px;animation:fadeIn 0.6s ease both; }
-    .dash-header { display:flex;align-items:center;justify-content:space-between;margin-bottom:48px;flex-wrap:wrap;gap:16px; }
-    .dash-brand { display:flex;align-items:center;gap:12px; }
-    .dash-brand-dot { width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 16px var(--green); }
-    .dash-brand-name { font-size:18px;font-weight:900; }
-    .dash-brand-name span { color:var(--green); }
-    .user-pill { display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);padding:8px 16px 8px 8px;border-radius:100px; }
-    .user-avatar { width:32px;height:32px;border-radius:50%;object-fit:cover;background:var(--surface3); }
-    .user-name { font-size:13px;font-weight:600; }
-    .btn-logout { background:none;border:1px solid var(--border);color:var(--text-muted);font-family:var(--font-display);font-size:12px;padding:8px 16px;border-radius:100px;cursor:pointer;transition:all 0.2s; }
-    .btn-logout:hover { border-color:var(--accent1);color:var(--accent1); }
-    .time-selector { display:flex;gap:8px;margin-bottom:40px;flex-wrap:wrap; }
-    .time-btn { background:var(--surface2);border:1px solid var(--border);color:var(--text-muted);font-family:var(--font-display);font-size:13px;font-weight:600;padding:10px 20px;border-radius:100px;cursor:pointer;transition:all 0.2s; }
-    .time-btn:hover { border-color:var(--green);color:var(--text); }
-    .time-btn.active { background:var(--green);border-color:var(--green);color:var(--black); }
-    .hero-section { display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:32px; }
+    /* DASHBOARD */
+    .dashboard{max-width:1200px;margin:0 auto;padding:40px 24px 100px;animation:fadeIn 0.6s ease both;}
+    .dash-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:48px;flex-wrap:wrap;gap:16px;}
+    .dash-brand{display:flex;align-items:center;gap:12px;}
+    .dash-brand-dot{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 16px var(--green);}
+    .dash-brand-name{font-size:18px;font-weight:900;}
+    .dash-brand-name span{color:var(--green);}
+    .user-pill{display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);padding:8px 16px 8px 8px;border-radius:100px;}
+    .user-avatar{width:32px;height:32px;border-radius:50%;object-fit:cover;background:var(--surface3);}
+    .user-name{font-size:13px;font-weight:600;}
+    .btn-logout{background:none;border:1px solid var(--border);color:var(--text-muted);font-family:var(--font-display);font-size:12px;padding:8px 16px;border-radius:100px;cursor:pointer;transition:all 0.2s;}
+    .btn-logout:hover{border-color:var(--accent1);color:var(--accent1);}
+    .time-selector{display:flex;gap:8px;margin-bottom:40px;flex-wrap:wrap;}
+    .time-btn{background:var(--surface2);border:1px solid var(--border);color:var(--text-muted);font-family:var(--font-display);font-size:13px;font-weight:600;padding:10px 20px;border-radius:100px;cursor:pointer;transition:all 0.2s;}
+    .time-btn:hover{border-color:var(--green);color:var(--text);}
+    .time-btn.active{background:var(--green);border-color:var(--green);color:var(--black);}
+    .hero-section{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:32px;}
     @media(max-width:768px){.hero-section{grid-template-columns:1fr;}}
-    .hero-card { background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:28px;position:relative;overflow:hidden;animation:cardSlideIn 0.5s ease both; }
-    .hero-card::before { content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent-color,var(--green)),transparent); }
+    .hero-card{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:28px;position:relative;overflow:hidden;animation:cardSlideIn 0.5s ease both;}
+    .hero-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent-color,var(--green)),transparent);}
     .hero-card:nth-child(1){--accent-color:var(--green);animation-delay:0.1s;}
     .hero-card:nth-child(2){--accent-color:var(--accent4);animation-delay:0.15s;}
     .hero-card:nth-child(3){--accent-color:var(--accent2);animation-delay:0.2s;}
-    .hero-label { font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:16px; }
-    .hero-img { width:72px;height:72px;border-radius:12px;object-fit:cover;margin-bottom:12px;box-shadow:0 8px 24px rgba(0,0,0,0.4); }
-    .hero-img.circle { border-radius:50%; }
-    .hero-value { font-size:22px;font-weight:700;line-height:1.2;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
-    .hero-meta { font-size:13px;color:var(--text-muted); }
-    .section-title { font-size:13px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--text-dim);margin-bottom:20px;display:flex;align-items:center;gap:10px; }
-    .section-title::after { content:'';flex:1;height:1px;background:var(--border); }
-    .section-wrap { margin-bottom:48px; }
-    .track-list { display:flex;flex-direction:column;gap:8px; }
-    .track-card { display:flex;align-items:center;gap:16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;cursor:pointer;transition:all 0.25s ease;position:relative;overflow:hidden; }
-    .track-card:hover { border-color:rgba(29,185,84,0.3);transform:translateX(4px); }
-    .track-card .badge { position:absolute;top:8px;right:10px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--accent2);font-family:var(--font-mono); }
-    .track-rank { font-family:var(--font-mono);font-size:13px;font-weight:700;color:var(--text-dim);min-width:28px;flex-shrink:0; }
-    .track-art { width:52px;height:52px;border-radius:8px;object-fit:cover;flex-shrink:0; }
-    .track-info { flex:1;min-width:0; }
-    .track-name { font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
-    .track-artist { font-size:13px;color:var(--text-muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
-    .track-meta { font-size:11px;color:var(--text-dim);margin-top:2px; }
-    .track-bar-wrap { width:60px;height:4px;background:var(--surface3);border-radius:2px;overflow:hidden;flex-shrink:0; }
-    .track-bar { height:100%;background:var(--green);border-radius:2px; }
-    .artists-grid { display:grid;grid-template-columns:repeat(5,1fr);gap:12px;align-items:start; }
+    .hero-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:16px;}
+    .hero-img{width:72px;height:72px;border-radius:12px;object-fit:cover;margin-bottom:12px;box-shadow:0 8px 24px rgba(0,0,0,0.4);}
+    .hero-img.circle{border-radius:50%;}
+    .hero-value{font-size:22px;font-weight:700;line-height:1.2;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .hero-meta{font-size:13px;color:var(--text-muted);}
+    .section-title{font-size:13px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--text-dim);margin-bottom:20px;display:flex;align-items:center;gap:10px;}
+    .section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+    .section-wrap{margin-bottom:48px;}
+    .track-list{display:flex;flex-direction:column;gap:8px;}
+    .track-card{display:flex;align-items:center;gap:16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;cursor:pointer;transition:all 0.25s ease;position:relative;overflow:hidden;}
+    .track-card:hover{border-color:rgba(29,185,84,0.3);transform:translateX(4px);}
+    .track-card .badge{position:absolute;top:8px;right:10px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--accent2);font-family:var(--font-mono);}
+    .track-rank{font-family:var(--font-mono);font-size:13px;font-weight:700;color:var(--text-dim);min-width:28px;flex-shrink:0;}
+    .track-art{width:52px;height:52px;border-radius:8px;object-fit:cover;flex-shrink:0;}
+    .track-info{flex:1;min-width:0;}
+    .track-name{font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .track-artist{font-size:13px;color:var(--text-muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .track-meta{font-size:11px;color:var(--text-dim);margin-top:2px;}
+    .track-bar-wrap{width:60px;height:4px;background:var(--surface3);border-radius:2px;overflow:hidden;flex-shrink:0;}
+    .track-bar{height:100%;background:var(--green);border-radius:2px;}
+    .artists-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;align-items:start;}
     @media(max-width:900px){.artists-grid{grid-template-columns:repeat(3,1fr);}}
     @media(max-width:500px){.artists-grid{grid-template-columns:repeat(2,1fr);}}
-    .artist-card { background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:20px 16px;text-align:center;cursor:pointer;transition:all 0.3s ease;position:relative;align-self:start; }
-    .artist-card:hover { border-color:rgba(29,185,84,0.4);transform:translateY(-6px);box-shadow:0 20px 40px rgba(0,0,0,0.4); }
-    .artist-rank-badge { position:absolute;top:12px;left:12px;background:rgba(0,0,0,0.7);border:1px solid var(--border);font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--green);padding:3px 7px;border-radius:6px; }
-    .artist-img { width:80px;height:80px;border-radius:50%;object-fit:cover;margin:0 auto 12px;border:2px solid var(--border);display:block;transition:border-color 0.3s; }
-    .artist-card:hover .artist-img { border-color:var(--green); }
-    .artist-name { font-size:14px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
-    .artist-sub { font-size:11px;color:var(--text-muted);margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
-    .albums-flex { display:flex;flex-wrap:wrap;gap:12px; }
-    .album-card { background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:12px;cursor:pointer;transition:all 0.3s ease;width:calc(20% - 10px);flex-shrink:0;flex-grow:0; }
+    .artist-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:20px 16px;text-align:center;cursor:pointer;transition:all 0.3s ease;position:relative;align-self:start;}
+    .artist-card:hover{border-color:rgba(29,185,84,0.4);transform:translateY(-6px);box-shadow:0 20px 40px rgba(0,0,0,0.4);}
+    .artist-rank-badge{position:absolute;top:12px;left:12px;background:rgba(0,0,0,0.7);border:1px solid var(--border);font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--green);padding:3px 7px;border-radius:6px;}
+    .artist-img{width:80px;height:80px;border-radius:50%;object-fit:cover;margin:0 auto 12px;border:2px solid var(--border);display:block;transition:border-color 0.3s;}
+    .artist-card:hover .artist-img{border-color:var(--green);}
+    .artist-name{font-size:14px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .artist-sub{font-size:11px;color:var(--text-muted);margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .albums-flex{display:flex;flex-wrap:wrap;gap:12px;}
+    .album-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:12px;cursor:pointer;transition:all 0.3s ease;width:calc(20% - 10px);flex-shrink:0;flex-grow:0;}
     @media(max-width:900px){.album-card{width:calc(33.333% - 8px);}}
     @media(max-width:500px){.album-card{width:calc(50% - 6px);}}
-    .album-card:hover { border-color:rgba(29,185,84,0.4);transform:translateY(-4px);box-shadow:0 16px 32px rgba(0,0,0,0.4); }
-    .album-img { width:100%;display:block;border-radius:8px;aspect-ratio:1/1;object-fit:cover;margin-bottom:10px; }
-    .album-name { font-size:12px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:3px; }
-    .album-artist { font-size:11px;color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
-    .album-year { font-size:11px;color:var(--text-dim);margin-top:2px;font-family:var(--font-mono); }
-    .btn-more { display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:16px;background:var(--surface2);border:1px solid var(--border);color:var(--text-muted);font-family:var(--font-display);font-size:13px;font-weight:600;padding:12px;border-radius:12px;cursor:pointer;transition:all 0.2s; }
-    .btn-more:hover { border-color:var(--green);color:var(--green); }
-    .vibe-banner { background:linear-gradient(135deg,var(--surface),var(--surface2));border:1px solid var(--border);border-radius:24px;padding:36px 40px;display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:48px;flex-wrap:wrap;gap:24px;position:relative;overflow:hidden; }
-    .vibe-banner::before { content:'';position:absolute;top:-60px;right:-60px;width:240px;height:240px;background:radial-gradient(circle,rgba(29,185,84,0.15) 0%,transparent 70%);border-radius:50%; }
-    .vibe-left { flex:1;min-width:200px;position:relative;z-index:1; }
-    .vibe-eyebrow { font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--green);margin-bottom:8px; }
-    .vibe-value { font-size:clamp(28px,5vw,52px);font-weight:900;letter-spacing:-2px;line-height:1; }
-    .vibe-desc { font-size:14px;color:var(--text-muted);margin-top:8px; }
-    .genre-tags { display:flex;gap:8px;flex-wrap:wrap;margin-top:12px; }
-    .genre-tag { background:rgba(29,185,84,0.12);border:1px solid rgba(29,185,84,0.25);color:var(--green);font-size:12px;font-weight:600;padding:6px 14px;border-radius:100px; }
-    .decade-bars { display:flex;flex-direction:column;gap:10px;min-width:180px;position:relative;z-index:1; }
-    .decade-row { display:flex;align-items:center;gap:12px; }
-    .decade-label { font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--text-muted);min-width:40px; }
-    .decade-bar-wrap { flex:1;height:6px;background:var(--surface3);border-radius:3px;overflow:hidden; }
-    .decade-bar { height:100%;background:var(--green);border-radius:3px; }
-    .decade-count { font-family:var(--font-mono);font-size:11px;color:var(--text-dim);min-width:20px;text-align:right; }
-    .stats-row { display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:48px; }
+    .album-card:hover{border-color:rgba(29,185,84,0.4);transform:translateY(-4px);box-shadow:0 16px 32px rgba(0,0,0,0.4);}
+    .album-img{width:100%;display:block;border-radius:8px;aspect-ratio:1/1;object-fit:cover;margin-bottom:10px;}
+    .album-name{font-size:12px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:3px;}
+    .album-artist{font-size:11px;color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .album-year-txt{font-size:11px;color:var(--text-dim);margin-top:2px;font-family:var(--font-mono);}
+    .btn-more{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:16px;background:var(--surface2);border:1px solid var(--border);color:var(--text-muted);font-family:var(--font-display);font-size:13px;font-weight:600;padding:12px;border-radius:12px;cursor:pointer;transition:all 0.2s;}
+    .btn-more:hover{border-color:var(--green);color:var(--green);}
+    .vibe-banner{background:linear-gradient(135deg,var(--surface),var(--surface2));border:1px solid var(--border);border-radius:24px;padding:36px 40px;display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:48px;flex-wrap:wrap;gap:24px;position:relative;overflow:hidden;}
+    .vibe-banner::before{content:'';position:absolute;top:-60px;right:-60px;width:240px;height:240px;background:radial-gradient(circle,rgba(29,185,84,0.15) 0%,transparent 70%);border-radius:50%;}
+    .vibe-left{flex:1;min-width:200px;position:relative;z-index:1;}
+    .vibe-eyebrow{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--green);margin-bottom:8px;}
+    .vibe-value{font-size:clamp(28px,5vw,52px);font-weight:900;letter-spacing:-2px;line-height:1;}
+    .vibe-desc{font-size:14px;color:var(--text-muted);margin-top:8px;}
+    .genre-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+    .genre-tag{background:rgba(29,185,84,0.12);border:1px solid rgba(29,185,84,0.25);color:var(--green);font-size:12px;font-weight:600;padding:6px 14px;border-radius:100px;}
+    .decade-bars{display:flex;flex-direction:column;gap:10px;min-width:180px;position:relative;z-index:1;}
+    .decade-row{display:flex;align-items:center;gap:12px;}
+    .decade-label{font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--text-muted);min-width:40px;}
+    .decade-bar-wrap{flex:1;height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;}
+    .decade-bar{height:100%;background:var(--green);border-radius:3px;}
+    .decade-count{font-family:var(--font-mono);font-size:11px;color:var(--text-dim);min-width:20px;text-align:right;}
+    .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:48px;}
     @media(max-width:600px){.stats-row{grid-template-columns:1fr;}}
-    .stat-block { background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:24px; }
-    .stat-icon { font-size:28px;margin-bottom:12px;display:block; }
-    .stat-number { font-size:36px;font-weight:900;letter-spacing:-2px;color:var(--green); }
-    .stat-label { font-size:13px;color:var(--text-muted);margin-top:4px; }
-    .share-section { background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:32px 40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px; }
-    .share-text h3 { font-size:20px;font-weight:700;margin-bottom:6px; }
-    .share-text p { font-size:14px;color:var(--text-muted); }
-    .share-buttons { display:flex;gap:10px;flex-wrap:wrap; }
-    .btn-share { display:flex;align-items:center;gap:8px;padding:12px 20px;border-radius:100px;font-family:var(--font-display);font-size:13px;font-weight:700;border:none;cursor:pointer;transition:all 0.2s; }
-    .btn-share.twitter { background:#1DA1F2;color:#fff; }
-    .btn-share.copy { background:var(--surface3);color:var(--text);border:1px solid var(--border); }
-    .btn-share:hover { transform:translateY(-2px);opacity:0.9; }
-    .loading-screen { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px; }
-    .loading-bars { display:flex;gap:5px;align-items:flex-end;height:40px; }
-    .loading-bars span { display:block;width:6px;border-radius:3px;background:var(--green);animation:barBounce 1s ease-in-out infinite; }
+    .stat-block{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:24px;}
+    .stat-icon{font-size:28px;margin-bottom:12px;display:block;}
+    .stat-number{font-size:36px;font-weight:900;letter-spacing:-2px;color:var(--green);}
+    .stat-label{font-size:13px;color:var(--text-muted);margin-top:4px;}
+    .share-section{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:32px 40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;}
+    .share-text h3{font-size:20px;font-weight:700;margin-bottom:6px;}
+    .share-text p{font-size:14px;color:var(--text-muted);}
+    .share-buttons{display:flex;gap:10px;flex-wrap:wrap;}
+    .btn-share{display:flex;align-items:center;gap:8px;padding:12px 20px;border-radius:100px;font-family:var(--font-display);font-size:13px;font-weight:700;border:none;cursor:pointer;transition:all 0.2s;}
+    .btn-share.twitter{background:#1DA1F2;color:#fff;}
+    .btn-share.copy{background:var(--surface3);color:var(--text);border:1px solid var(--border);}
+    .btn-share:hover{transform:translateY(-2px);opacity:0.9;}
+    .loading-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;}
+    .loading-bars{display:flex;gap:5px;align-items:flex-end;height:40px;}
+    .loading-bars span{display:block;width:6px;border-radius:3px;background:var(--green);animation:barBounce 1s ease-in-out infinite;}
     .loading-bars span:nth-child(1){height:24px;} .loading-bars span:nth-child(2){height:36px;animation-delay:0.1s;} .loading-bars span:nth-child(3){height:20px;animation-delay:0.2s;} .loading-bars span:nth-child(4){height:40px;animation-delay:0.3s;} .loading-bars span:nth-child(5){height:28px;animation-delay:0.4s;}
-    .loading-text { font-size:16px;color:var(--text-muted);font-weight:300;letter-spacing:1px; }
-    .error-card { background:rgba(255,107,107,0.1);border:1px solid rgba(255,107,107,0.3);border-radius:16px;padding:24px;margin:20px 0;color:var(--accent1);font-size:14px; }
-    .empty-state { text-align:center;padding:80px 20px; }
-    .empty-state .emoji { font-size:64px;margin-bottom:24px; }
-    .empty-state h2 { font-size:24px;font-weight:700;margin-bottom:12px; }
-    .empty-state p { font-size:15px;color:var(--text-muted);max-width:400px;margin:0 auto 32px; }
-    .copied-toast { position:fixed;bottom:60px;left:50%;transform:translateX(-50%);background:var(--green);color:var(--black);font-weight:700;font-size:14px;padding:12px 28px;border-radius:100px;animation:toastIn 2.5s ease forwards;pointer-events:none;z-index:10000; }
+    .loading-text{font-size:16px;color:var(--text-muted);font-weight:300;letter-spacing:1px;}
+    .error-card{background:rgba(255,107,107,0.1);border:1px solid rgba(255,107,107,0.3);border-radius:16px;padding:24px;margin:20px 0;color:var(--accent1);font-size:14px;}
+    .empty-state{text-align:center;padding:80px 20px;}
+    .empty-state .emoji{font-size:64px;margin-bottom:24px;}
+    .empty-state h2{font-size:24px;font-weight:700;margin-bottom:12px;}
+    .empty-state p{font-size:15px;color:var(--text-muted);max-width:400px;margin:0 auto 32px;}
+    .copied-toast{position:fixed;bottom:60px;left:50%;transform:translateX(-50%);background:var(--green);color:var(--black);font-weight:700;font-size:14px;padding:12px 28px;border-radius:100px;animation:toastIn 2.5s ease forwards;pointer-events:none;z-index:10000;}
     .rank-1{color:var(--accent2);} .rank-2{color:#c0c0c0;} .rank-3{color:#cd7f32;} .rank-other{color:var(--text-dim);}
-    .debug-bar { position:fixed;bottom:0;left:0;right:0;background:#111;border-top:1px solid #333;padding:8px 16px;font-family:monospace;font-size:12px;color:#1DB954;z-index:99999;overflow:hidden;white-space:nowrap;text-overflow:ellipsis; }
+    .debug-bar{position:fixed;bottom:0;left:0;right:0;background:#111;border-top:1px solid #333;padding:8px 16px;font-family:monospace;font-size:12px;color:#1DB954;z-index:99999;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
   </style>
 </head>
 <body>
@@ -275,28 +380,18 @@ const ARTIST_GENRE_MAP = {
   'nas':['hip-hop','rap','east coast rap'],'jay-z':['hip-hop','rap','east coast rap'],
   'jay z':['hip-hop','rap','east coast rap'],'lil wayne':['hip-hop','rap','new orleans rap'],
   'nicki minaj':['hip-hop','rap','pop rap'],'cardi b':['hip-hop','rap','trap'],
-  'megan thee stallion':['hip-hop','rap','trap'],'a$ap rocky':['hip-hop','rap','trap'],
-  'asap rocky':['hip-hop','rap','trap'],'tyler the creator':['hip-hop','rap','alternative hip-hop'],
-  'tyler, the creator':['hip-hop','rap','alternative hip-hop'],'earl sweatshirt':['hip-hop','rap','alternative hip-hop'],
+  'a$ap rocky':['hip-hop','rap','trap'],'asap rocky':['hip-hop','rap','trap'],
+  'tyler the creator':['hip-hop','rap','alternative hip-hop'],'tyler, the creator':['hip-hop','rap','alternative hip-hop'],
   'freddie gibbs':['hip-hop','rap','gangsta rap'],'conway the machine':['hip-hop','rap','griselda'],
   'benny the butcher':['hip-hop','rap','griselda'],'pusha t':['hip-hop','rap','east coast rap'],
   'rick ross':['hip-hop','rap','trap'],'meek mill':['hip-hop','rap','philadelphia rap'],
-  'big sean':['hip-hop','rap','detroit rap'],'chance the rapper':['hip-hop','rap','gospel rap'],
-  'childish gambino':['hip-hop','rap','r&b'],'logic':['hip-hop','rap','conscious hip-hop'],
   'mac miller':['hip-hop','rap','alternative hip-hop'],'joey bada$$':['hip-hop','rap','boom bap'],
-  'joey badass':['hip-hop','rap','boom bap'],'denzel curry':['hip-hop','rap','florida rap'],
-  'larry june':['hip-hop','rap','west coast rap'],'don toliver':['hip-hop','r&b','trap'],
-  'rod wave':['hip-hop','r&b','trap soul'],'the weeknd':['r&b','pop','dark r&b'],
+  'denzel curry':['hip-hop','rap','florida rap'],'the weeknd':['r&b','pop','dark r&b'],
   'frank ocean':['r&b','neo soul','alternative r&b'],'sza':['r&b','neo soul','alternative r&b'],
-  'khalid':['r&b','pop','indie pop'],'bryson tiller':['r&b','trap soul'],
-  'partynextdoor':['r&b','trap soul'],'taylor swift':['pop','country pop'],
-  'ariana grande':['pop','r&b'],'billie eilish':['pop','indie pop','dark pop'],
-  'olivia rodrigo':['pop','pop rock'],'dua lipa':['pop','dance pop'],
-  'bad bunny':['latin trap','reggaeton','latin pop'],'j balvin':['reggaeton','latin pop'],
-  'arctic monkeys':['rock','indie rock','alternative'],'radiohead':['rock','alternative','art rock'],
+  'taylor swift':['pop','country pop'],'billie eilish':['pop','indie pop','dark pop'],
+  'bad bunny':['latin trap','reggaeton','latin pop'],'arctic monkeys':['rock','indie rock','alternative'],
   'tame impala':['psychedelic pop','indie rock','alternative'],
-  'anderson .paak':['r&b','hip-hop','soul','funk'],'anderson paak':['r&b','hip-hop','soul','funk'],
-  'kaytranada':['electronic','house','r&b'],
+  'anderson .paak':['r&b','hip-hop','soul','funk'],'kaytranada':['electronic','house','r&b'],
 };
 
 function inferGenres(artists) {
@@ -312,7 +407,6 @@ function inferGenres(artists) {
 }
 
 function setDebug(msg){console.log('[FW]',msg);const el=document.getElementById('debug-bar');if(el)el.textContent='🎵 '+msg;}
-
 function generateCodeVerifier(l=128){const c='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';let r='';crypto.getRandomValues(new Uint8Array(l)).forEach(v=>{r+=c[v%c.length];});return r;}
 async function generateCodeChallenge(v){const d=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v));return btoa(String.fromCharCode(...new Uint8Array(d))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');}
 async function initiateLogin(){const v=generateCodeVerifier();localStorage.setItem('pkce_verifier',v);const p=new URLSearchParams({client_id:CLIENT_ID,response_type:'code',redirect_uri:REDIRECT_URI,code_challenge_method:'S256',code_challenge:await generateCodeChallenge(v),scope:SCOPES,show_dialog:'true'});window.location.href=`https://accounts.spotify.com/authorize?${p}`;}
@@ -338,7 +432,7 @@ async function fetchAllData(token,timeRange){
   const albumMap={};
   tracks.forEach(t=>{const a=t.album;if(!a?.id)return;if(!albumMap[a.id])albumMap[a.id]={...a,trackCount:0};albumMap[a.id].trackCount++;});
   const albums=Object.values(albumMap).sort((a,b)=>b.trackCount-a.trackCount);
-  const estMinutes=Math.round(tracks.reduce((sum,t)=>(sum+(t.duration_ms||180000)),0)/60000)*8;
+  const estMinutes=Math.round(tracks.reduce((s,t)=>(s+(t.duration_ms||180000)),0)/60000)*8;
   setDebug(`${tracks.length} tracks · ${artists.length} artists · ${genres.length} genres`);
   return{tracks,artists,albums,recentTracks,genres,profile:profileData||{},estMinutes};
 }
@@ -347,230 +441,297 @@ function getTopDecade(tracks){const d={};tracks.forEach(t=>{const y=parseInt((t.
 function getDecadeBreakdown(tracks){const d={};tracks.forEach(t=>{const y=parseInt((t.album?.release_date||'2000').slice(0,4));const dec=Math.floor(y/10)*10;d[dec]=(d[dec]||0)+1;});const s=Object.entries(d).sort((a,b)=>b[1]-a[1]).slice(0,4);const max=s[0]?.[1]||1;return s.map(([dec,c])=>({decade:dec+'s',count:c,pct:Math.round((c/max)*100)}));}
 function timeAgo(ds){const diff=Date.now()-new Date(ds).getTime(),m=Math.floor(diff/60000);if(m<1)return'just now';if(m<60)return m+'m ago';const h=Math.floor(m/60);if(h<24)return h+'h ago';return Math.floor(h/24)+'d ago';}
 function rankClass(i){return['rank-1','rank-2','rank-3'][i]||'rank-other';}
-function fmtMinutes(m){if(m>=60000)return Math.round(m/60000)+'M+';if(m>=1000)return(m/1000).toFixed(1)+'K';return m+'';}
+function fmtNum(n){if(n>=1000000)return Math.round(n/100000)/10+'M';if(n>=1000)return Math.round(n/100)/10+'K';return n+'';}
 
-function LoadingScreen({message='Loading…'}){return <div className="loading-screen"><div className="loading-bars">{[1,2,3,4,5].map(i=><span key={i}/>)}</div><p className="loading-text">{message}</p></div>;}
-
-function LoginScreen(){
-  const sp="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z";
-  return(
-    <div className="login-screen">
-      <div className="logo-mark"><svg viewBox="0 0 24 24"><path d={sp}/></svg></div>
-      <h1 className="login-title">Forever<br/><span>Wrapped</span></h1>
-      <p className="login-subtitle">Your Spotify Wrapped — any year's style, your current data. Plus full in-depth stats.</p>
-      <button className="btn-login" onClick={initiateLogin}>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d={sp}/></svg>Connect with Spotify
-      </button>
-      <div className="login-features">
-        {['2024 Style','2023 Style','2022 Style','2021 Style','Full Stats'].map(f=>(
-          <div className="feature-pill" key={f}><span className="dot"/>{f}</div>
-        ))}
-      </div>
-    </div>
+// ── SVG ARCS for 2025 artists slide ──
+function Arcs({color='#fff', opacity=0.12, size=280}) {
+  const cx=size/2, cy=size/2;
+  const arcs=[0.85,0.68,0.51,0.34,0.17].map((r,i)=>({r:r*cx, sw:14, gap:i}));
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{position:'absolute',bottom:-40,right:-40,pointerEvents:'none',opacity}}>
+      {arcs.map((a,i)=>(
+        <circle key={i} cx={cx} cy={cy} r={a.r} fill="none" stroke={color} strokeWidth={a.sw}/>
+      ))}
+    </svg>
   );
 }
 
-// ── STORY SLIDES per year ──
-function buildSlides(year, data) {
-  const tracks = data.tracks.slice(0,5);
-  const artists = data.artists.slice(0,5);
-  const genres = data.genres;
-  const topGenre = genres[0] || 'hip-hop';
-  const topDecade = getTopDecade(data.tracks) || '2010s';
-  const mins = fmtMinutes(data.estMinutes);
-  const t0 = tracks[0], a0 = artists[0];
-
-  const STYLES = {
-    2024: { intro:'slide-2024-intro', tracks:'slide-2024-tracks', artists:'slide-2024-artists', genre:'slide-2024-genre', minutes:'slide-2024-minutes', end:'slide-2024-end', color:'#FF6B35', textColor:'#fff' },
-    2023: { intro:'slide-2023-intro', tracks:'slide-2023-tracks', artists:'slide-2023-artists', genre:'slide-2023-genre', minutes:'slide-2023-minutes', end:'slide-2023-end', color:'#FF2D55', textColor:'#fff' },
-    2022: { intro:'slide-2022-intro', tracks:'slide-2022-tracks', artists:'slide-2022-artists', genre:'slide-2022-genre', minutes:'slide-2022-minutes', end:'slide-2022-end', color:'#7C3AED', textColor:'#fff' },
-    2021: { intro:'slide-2021-intro', tracks:'slide-2021-tracks', artists:'slide-2021-artists', genre:'slide-2021-genre', minutes:'slide-2021-minutes', end:'slide-2021-end', color:'#1DB954', textColor:'#fff' },
-  };
-  const s = STYLES[year];
+// ── 2025 SLIDES ──
+function build2025Slides(data) {
+  const tracks=data.tracks.slice(0,5);
+  const artists=data.artists.slice(0,5);
+  const albums=data.albums.slice(0,4);
+  const genres=data.genres;
+  const g0=genres[0]||'Hip-Hop', g1=genres[1]||'Rap', g2=genres[2]||'R&B', g3=genres[3]||'Trap', g4=genres[4]||'Indie';
+  const topDecade=getTopDecade(data.tracks)||'2010s';
+  const mins=fmtNum(data.estMinutes);
+  const t0=tracks[0], a0=artists[0];
+  const decadeNum=parseInt(topDecade);
+  const listeningAge=2025-decadeNum+10;
 
   return [
-    // INTRO
-    { cls: s.intro, content: (
-      <div style={{animation:'slideUp 0.5s ease both'}}>
-        <div className="slide-year-badge">{year} WRAPPED</div>
-        {t0 && <img className="slide-img-big" src={t0.album?.images?.[0]?.url||''} alt={t0.name} onError={e=>{e.target.style.display='none';}}/>}
-        <div className="slide-headline">Your year in music starts here</div>
-        <div className="slide-big">{data.profile?.display_name||'Listener'}</div>
-        <div className="slide-sub">Tap to begin →</div>
-        {year===2022 && <div className="monogram" style={{top:-40,left:-40,color:'#fff'}}>{(data.profile?.display_name||'Y')[0]}{(data.profile?.display_name||'YM')[1]||'M'}</div>}
+    // SLIDE 1: INTRO — full overview card
+    { key:'intro', render: ()=>(
+      <div className="story-slide s25-intro active" style={{position:'absolute',inset:0}}>
+        <div className="s25-intro-strip">
+          <div className="s25-year-vertical">2025</div>
+        </div>
+        <div className="s25-intro-checker"/>
+        <div className="s25-intro-body">
+          <div className="s25-intro-genres">
+            <div className="s25-genre-huge" style={{textTransform:'capitalize'}}>{g0}</div>
+            <div className="s25-genre-large" style={{textTransform:'capitalize'}}>{g1}</div>
+            <div className="s25-genre-med" style={{textTransform:'capitalize'}}>{g2}</div>
+            <div className="s25-genre-small" style={{textTransform:'capitalize'}}>{g3}</div>
+            <div className="s25-genre-tiny" style={{textTransform:'capitalize'}}>{g4}</div>
+          </div>
+          <div className="s25-intro-bottom">
+            <div className="s25-intro-col">
+              <div className="s25-col-label">Top Songs</div>
+              {tracks.slice(0,3).map((t,i)=><div key={i} className="s25-col-item">{i+1}. {t.name}</div>)}
+            </div>
+            <div className="s25-intro-col" style={{textAlign:'right'}}>
+              <div className="s25-col-label">Top Artists</div>
+              {artists.slice(0,3).map((a,i)=><div key={i} className="s25-col-item">{i+1}. {a.name}</div>)}
+            </div>
+          </div>
+        </div>
+        <div className="slide-swipe-hint" style={{color:'#000',bottom:12,left:68}}>TAP TO CONTINUE →</div>
       </div>
     )},
-    // MINUTES
-    { cls: s.minutes, content: (
-      <div style={{animation:'slideUp 0.5s ease both'}}>
-        <div className="slide-year-badge">{year} WRAPPED</div>
-        <div className="slide-headline">You spent approximately</div>
-        <div className="slide-number" style={{color: year===2021?'#1DB954':year===2023?'#FF9500':'#FFD93D'}}>{mins}</div>
-        <div className="slide-big">minutes listening</div>
-        <div className="slide-sub">Based on your top tracks this period</div>
+
+    // SLIDE 2: TOP GENRES
+    { key:'genres', render: ()=>(
+      <div className="story-slide s25-genres active" style={{position:'absolute',inset:0,flexDirection:'column',padding:'52px 28px 32px',justifyContent:'space-between'}}>
+        <div>
+          <div className="s25-header">My Top Genres</div>
+          <div className="s25-genres-list">
+            {[
+              {g:g0, cls:'s25-genre-huge'},
+              {g:g1, cls:'s25-genre-large'},
+              {g:g2, cls:'s25-genre-med'},
+              {g:g3, cls:'s25-genre-small'},
+              {g:g4, cls:'s25-genre-tiny'},
+            ].map(({g,cls},i)=>(
+              <div className="s25-genre-row" key={i}>
+                <span className="s25-genre-num">{i+1}</span>
+                <span className={cls} style={{textTransform:'capitalize'}}>{g}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div style={{display:'flex',gap:20}}>
+          <div><div className="s25-stat-big">{mins}</div><div className="s25-stat-label">Minutes</div></div>
+          <div><div className="s25-stat-big" style={{textTransform:'capitalize'}}>{g0}</div><div className="s25-stat-label">Top Genre</div></div>
+        </div>
+        <div className="slide-swipe-hint" style={{color:'#999',position:'relative',bottom:'auto',left:'auto',transform:'none',marginTop:8,fontSize:10}}>TAP TO CONTINUE</div>
       </div>
     )},
-    // TOP TRACKS
-    { cls: s.tracks, content: (
-      <div style={{width:'100%',animation:'slideUp 0.5s ease both'}}>
-        <div className="slide-year-badge">{year} WRAPPED</div>
-        <div className="slide-headline" style={{marginBottom:12}}>Your top tracks</div>
-        <div className="slide-track-list">
-          {tracks.map((t,i)=>(
-            <div className="slide-track-item" key={t.id}>
-              <span className="slide-track-num">#{i+1}</span>
-              <img className="slide-track-img" src={t.album?.images?.[0]?.url||''} alt={t.name} onError={e=>{e.target.style.display='none';}}/>
-              <div className="slide-track-info">
-                <div className="slide-track-name">{t.name}</div>
-                <div className="slide-track-artist">{(t.artists||[]).map(a=>a.name).join(', ')}</div>
+
+    // SLIDE 3: TOP ALBUMS
+    { key:'albums', render: ()=>(
+      <div className="story-slide active" style={{position:'absolute',inset:0,background:'var(--w25-cream)',color:'var(--w25-black)',flexDirection:'column',padding:'52px 24px 28px',justifyContent:'flex-start',display:'flex'}}>
+        <div className="s25-header">My Top Albums</div>
+        <div className="s25-albums-grid">
+          {albums.map((alb,i)=>(
+            <div key={i} className="s25-album-square">
+              <img src={alb.images?.[0]?.url||''} alt={alb.name} onError={e=>{e.target.style.background='#ccc';e.target.style.display='none';}}/>
+            </div>
+          ))}
+          {albums.length<4 && Array(4-albums.length).fill(0).map((_,i)=><div key={'e'+i} className="s25-album-square" style={{background:'#ddd'}}/>)}
+        </div>
+        <div className="s25-albums-list">
+          {data.albums.slice(0,5).map((alb,i)=>(
+            <div key={i} className="s25-album-row">
+              <span className="s25-album-num">{i+1}</span>
+              <div className="s25-album-info">
+                <div className="s25-album-name">{alb.name}</div>
+                <div className="s25-album-artist">{(alb.artists||[]).map(a=>a.name).join(', ')}</div>
               </div>
             </div>
           ))}
         </div>
+        <div className="slide-swipe-hint" style={{color:'#999',position:'relative',bottom:'auto',left:'auto',transform:'none',marginTop:12,fontSize:10}}>TAP TO CONTINUE</div>
       </div>
     )},
-    // TOP SONG
-    { cls: s.intro, content: (
-      <div style={{animation:'slideUp 0.5s ease both'}}>
-        <div className="slide-year-badge">{year} WRAPPED</div>
-        <div className="slide-headline">Your #1 song this year</div>
-        {t0 && <img className="slide-img-big" src={t0.album?.images?.[0]?.url||''} alt={t0.name} onError={e=>{e.target.style.display='none';}}/>}
-        <div className="slide-big" style={{fontSize:'clamp(20px,5vw,32px)'}}>{t0?.name||'—'}</div>
-        <div className="slide-sub">{(t0?.artists||[]).map(a=>a.name).join(', ')}</div>
-      </div>
-    )},
-    // TOP ARTISTS
-    { cls: s.artists, content: (
-      <div style={{width:'100%',animation:'slideUp 0.5s ease both'}}>
-        <div className="slide-year-badge">{year} WRAPPED</div>
-        <div className="slide-headline" style={{marginBottom:12}}>Your top artists</div>
-        <div className="slide-artist-grid">
-          {artists.slice(0,4).map((a,i)=>(
-            <div className="slide-artist-item" key={a.id}>
-              <img className="slide-artist-img" src={a.images?.[0]?.url||''} alt={a.name} onError={e=>{e.target.style.display='none';}}/>
-              <div className="slide-artist-name">{a.name}</div>
-              <div className="slide-artist-num">#{i+1}</div>
+
+    // SLIDE 4: TOP ARTISTS list
+    { key:'artists', render: ()=>(
+      <div className="story-slide s25-artists active" style={{position:'absolute',inset:0,display:'flex',flexDirection:'column',padding:'52px 28px 32px'}}>
+        <Arcs color="#fff" opacity={0.08} size={320}/>
+        <div className="s25-header" style={{color:'var(--w25-cream)'}}>My Top Artists</div>
+        <div className="s25-artists-list" style={{position:'relative',zIndex:2}}>
+          {artists.map((a,i)=>(
+            <div key={a.id} className="s25-artist-row">
+              <span className="s25-artist-num">{i+1}</span>
+              <div className="s25-artist-chip">
+                <img className="s25-artist-chip-img" src={a.images?.[0]?.url||''} alt={a.name} onError={e=>{e.target.style.background='#444';}}/>
+                <div>
+                  {i===0&&<div className="s25-artist-top-badge">TOP ARTIST</div>}
+                  <div className="s25-artist-chip-name">{a.name}</div>
+                </div>
+              </div>
             </div>
           ))}
         </div>
-        {artists[4] && <div style={{marginTop:10,fontSize:13,opacity:0.6}}>+ {artists[4].name} at #5</div>}
+        <div className="slide-swipe-hint" style={{color:'#555',position:'relative',bottom:'auto',left:'auto',transform:'none',marginTop:12,fontSize:10}}>TAP TO CONTINUE</div>
       </div>
     )},
-    // TOP ARTIST solo
-    { cls: s.artists, content: (
-      <div style={{animation:'slideUp 0.5s ease both'}}>
-        <div className="slide-year-badge">{year} WRAPPED</div>
-        <div className="slide-headline">You listened to them the most</div>
-        {a0 && <img className="slide-img-big circle" src={a0.images?.[0]?.url||''} alt={a0.name} onError={e=>{e.target.style.display='none';}}/>}
-        <div className="slide-big" style={{fontSize:'clamp(22px,6vw,40px)'}}>{a0?.name||'—'}</div>
-        <div className="slide-sub">Your #1 artist</div>
+
+    // SLIDE 5: TOP ARTIST solo big circle
+    { key:'top-artist', render: ()=>(
+      <div className="story-slide s25-top-artist active" style={{position:'absolute',inset:0,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',padding:'40px 28px',textAlign:'center',background:'var(--w25-black)'}}>
+        <Arcs color="#fff" opacity={0.07} size={400}/>
+        {a0 && <img className="s25-big-circle" src={a0.images?.[0]?.url||''} alt={a0.name} onError={e=>{e.target.style.background='#333';}} style={{position:'relative',zIndex:2}}/>}
+        <div className="s25-top-artist-label" style={{position:'relative',zIndex:2}}>My Top Artist</div>
+        <div className="s25-top-artist-name" style={{position:'relative',zIndex:2}}>{a0?.name||'—'}</div>
+        <div className="s25-top-artist-mins" style={{position:'relative',zIndex:2}}>{mins} minutes of music this year</div>
+        <div className="slide-swipe-hint" style={{color:'#444',position:'relative',bottom:'auto',left:'auto',transform:'none',marginTop:20,fontSize:10}}>TAP TO CONTINUE</div>
       </div>
     )},
-    // GENRE
-    { cls: s.genre, content: (
-      <div style={{animation:'slideUp 0.5s ease both'}}>
-        <div className="slide-year-badge">{year} WRAPPED</div>
-        <div className="slide-headline">Your sound defined by</div>
-        <div className="slide-genre-pill">{topGenre}</div>
-        <div className="slide-big" style={{fontSize:'clamp(22px,5vw,36px)'}}>{topDecade}</div>
-        <div className="slide-sub">Your dominant era</div>
-        <div style={{marginTop:16,display:'flex',gap:8,flexWrap:'wrap',justifyContent:'center'}}>
-          {genres.slice(1,4).map(g=><span key={g} style={{background:'rgba(255,255,255,0.15)',padding:'4px 12px',borderRadius:100,fontSize:11,fontWeight:700}}>{g}</span>)}
+
+    // SLIDE 6: TOP SONGS — checker top split
+    { key:'songs', render: ()=>(
+      <div className="story-slide s25-songs active" style={{position:'absolute',inset:0,display:'flex',flexDirection:'column'}}>
+        <div className="s25-songs-checker"/>
+        <div className="s25-songs-body">
+          <div className="s25-header" style={{marginBottom:16}}>My Top Songs</div>
+          <div className="s25-songs-list">
+            {tracks.map((t,i)=>(
+              <div key={t.id} className="s25-song-row">
+                <span className="s25-song-num">{i+1}</span>
+                <img className="s25-song-img" src={t.album?.images?.[0]?.url||''} alt={t.name} onError={e=>{e.target.style.background='#ddd';}}/>
+                <div className="s25-song-info">
+                  <div className="s25-song-name">{t.name}</div>
+                  <div className="s25-song-artist">{(t.artists||[]).map(a=>a.name).join(', ')}</div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
+        <div className="slide-swipe-hint" style={{color:'#999',position:'relative',bottom:'auto',left:'auto',transform:'none',padding:'0 28px 20px',fontSize:10}}>TAP TO CONTINUE</div>
       </div>
     )},
-    // END
-    { cls: s.end, content: (
-      <div style={{animation:'popIn 0.5s ease both'}}>
-        <div className="slide-year-badge">{year} WRAPPED</div>
-        <div style={{fontSize:64,marginBottom:16}}>🎉</div>
-        <div className="slide-big">That's your {year}!</div>
-        <div className="slide-sub" style={{marginTop:12}}>Scroll down for your full in-depth stats ↓</div>
-        {year===2023&&<div style={{position:'absolute',inset:0,pointerEvents:'none',overflow:'hidden'}}>
-          {['◯','✦','~','❋'].map((s,i)=><div key={i} style={{position:'absolute',fontSize:40,opacity:0.1,top:`${20+i*20}%`,left:`${10+i*25}%`,animation:'wiggle 3s ease-in-out infinite',animationDelay:`${i*0.5}s`}}>{s}</div>)}
-        </div>}
+
+    // SLIDE 7: LISTENING AGE — cream, big purple number
+    { key:'age', render: ()=>(
+      <div className="story-slide s25-age active" style={{position:'absolute',inset:0,display:'flex',flexDirection:'column',justifyContent:'center',padding:'52px 32px 40px',background:'var(--w25-cream)',color:'var(--w25-black)'}}>
+        <div className="s25-header">My Listening Age</div>
+        <div className="s25-big-purple">{listeningAge}</div>
+        <div className="s25-age-sub">
+          Since I was into music from the <span className="s25-age-era">Late {topDecade.replace('s','')+'s'}</span>
+        </div>
+        <div className="slide-swipe-hint" style={{color:'#aaa',position:'relative',bottom:'auto',left:'auto',transform:'none',marginTop:32,fontSize:10}}>TAP TO CONTINUE</div>
+      </div>
+    )},
+
+    // SLIDE 8: MINUTES LISTENED — black, big purple number
+    { key:'minutes', render: ()=>(
+      <div className="story-slide s25-minutes active" style={{position:'absolute',inset:0,display:'flex',flexDirection:'column',justifyContent:'center',padding:'52px 32px 40px',background:'var(--w25-black)',color:'var(--w25-cream)'}}>
+        <div className="s25-header" style={{color:'var(--w25-cream)',opacity:0.6}}>My Minutes Listened</div>
+        <div className="s25-minutes-num">{fmtNum(data.estMinutes)}</div>
+        <div className="s25-minutes-sub">That's {Math.round(data.estMinutes/60)} hours of music.</div>
+        <div className="slide-swipe-hint" style={{color:'#444',position:'relative',bottom:'auto',left:'auto',transform:'none',marginTop:32,fontSize:10}}>TAP TO CONTINUE</div>
+      </div>
+    )},
+
+    // SLIDE 9: END
+    { key:'end', render: ()=>(
+      <div className="story-slide s25-end active" style={{position:'absolute',inset:0,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',textAlign:'center',padding:'40px 28px',background:'var(--w25-black)'}}>
+        <div className="s25-end-year">2025</div>
+        <div className="s25-end-sub">That was your year. 🎉</div>
+        <div className="s25-end-hint">Scroll down for your full in-depth stats ↓</div>
       </div>
     )},
   ];
 }
 
+// ── OTHER YEAR SLIDES ──
+function buildOtherSlides(year, data) {
+  const tracks=data.tracks.slice(0,5), artists=data.artists.slice(0,5);
+  const genres=data.genres, topGenre=genres[0]||'hip-hop', topDecade=getTopDecade(data.tracks)||'2010s';
+  const mins=fmtNum(data.estMinutes), t0=tracks[0], a0=artists[0];
+  const S={
+    2024:{i:'slide-2024-intro',t:'slide-2024-tracks',a:'slide-2024-artists',g:'slide-2024-genre',m:'slide-2024-minutes',e:'slide-2024-end',c:'#FF6B35'},
+    2023:{i:'slide-2023-intro',t:'slide-2023-tracks',a:'slide-2023-artists',g:'slide-2023-genre',m:'slide-2023-minutes',e:'slide-2023-end',c:'#FF2D55'},
+    2022:{i:'slide-2022-intro',t:'slide-2022-tracks',a:'slide-2022-artists',g:'slide-2022-genre',m:'slide-2022-minutes',e:'slide-2022-end',c:'#7C3AED'},
+    2021:{i:'slide-2021-intro',t:'slide-2021-tracks',a:'slide-2021-artists',g:'slide-2021-genre',m:'slide-2021-minutes',e:'slide-2021-end',c:'#1DB954'},
+  }[year];
+  const mk=(cls,content)=>({key:cls, render:()=>(
+    <div className={`story-slide generic ${cls} active`} style={{position:'absolute',inset:0}}>{content}</div>
+  )});
+  return [
+    mk(S.i,<><div className="slide-year-badge">{year} WRAPPED</div>{t0&&<img className="slide-img-big" src={t0.album?.images?.[0]?.url||''} alt={t0.name} onError={e=>{e.target.style.display='none';}}/>}<div className="slide-headline">Your year in music</div><div className="slide-big" style={{fontSize:'clamp(20px,5vw,32px)'}}>{data.profile?.display_name||'Listener'}</div><div className="slide-sub">Tap to begin →</div></>),
+    mk(S.m,<><div className="slide-year-badge">{year} WRAPPED</div><div className="slide-headline">You spent approximately</div><div className="slide-number" style={{color:year===2021?'#1DB954':'#FFD93D'}}>{mins}</div><div className="slide-big">minutes listening</div></>),
+    mk(S.t,<div style={{width:'100%',animation:'slideUp 0.5s ease both'}}><div className="slide-year-badge">{year} WRAPPED</div><div className="slide-headline" style={{marginBottom:12}}>Your top tracks</div><div className="slide-track-list">{tracks.map((t,i)=>(<div className="slide-track-item" key={t.id}><span className="slide-track-num">#{i+1}</span><img className="slide-track-img" src={t.album?.images?.[0]?.url||''} alt={t.name} onError={e=>{e.target.style.display='none';}}/><div className="slide-track-info"><div className="slide-track-name">{t.name}</div><div className="slide-track-artist">{(t.artists||[]).map(a=>a.name).join(', ')}</div></div></div>))}</div></div>),
+    mk(S.i,<><div className="slide-year-badge">{year} WRAPPED</div><div className="slide-headline">Your #1 song</div>{t0&&<img className="slide-img-big" src={t0.album?.images?.[0]?.url||''} alt={t0.name} onError={e=>{e.target.style.display='none';}}/>}<div className="slide-big" style={{fontSize:'clamp(18px,4vw,28px)'}}>{t0?.name||'—'}</div><div className="slide-sub">{(t0?.artists||[]).map(a=>a.name).join(', ')}</div></>),
+    mk(S.a,<div style={{width:'100%'}}><div className="slide-year-badge">{year} WRAPPED</div><div className="slide-headline" style={{marginBottom:12}}>Your top artists</div><div className="slide-artist-grid">{artists.slice(0,4).map((a,i)=>(<div className="slide-artist-item" key={a.id}><img className="slide-artist-img" src={a.images?.[0]?.url||''} alt={a.name} onError={e=>{e.target.style.display='none';}}/><div className="slide-artist-name">{a.name}</div><div className="slide-artist-num">#{i+1}</div></div>))}</div></div>),
+    mk(S.a,<><div className="slide-year-badge">{year} WRAPPED</div><div className="slide-headline">Your #1 artist</div>{a0&&<img className="slide-img-big circle" src={a0.images?.[0]?.url||''} alt={a0.name} onError={e=>{e.target.style.display='none';}}/>}<div className="slide-big" style={{fontSize:'clamp(22px,6vw,40px)'}}>{a0?.name||'—'}</div></>),
+    mk(S.g,<><div className="slide-year-badge">{year} WRAPPED</div><div className="slide-headline">Your sound defined by</div><div className="slide-genre-pill">{topGenre}</div><div className="slide-big" style={{fontSize:'clamp(22px,5vw,36px)'}}>{topDecade}</div><div style={{marginTop:16,display:'flex',gap:8,flexWrap:'wrap',justifyContent:'center'}}>{genres.slice(1,4).map(g=><span key={g} style={{background:'rgba(255,255,255,0.15)',padding:'4px 12px',borderRadius:100,fontSize:11,fontWeight:700}}>{g}</span>)}</div></>),
+    mk(S.e,<><div className="slide-year-badge">{year} WRAPPED</div><div style={{fontSize:64,marginBottom:16}}>🎉</div><div className="slide-big">That's your {year}!</div><div className="slide-sub" style={{marginTop:12}}>Scroll down for full stats ↓</div></>),
+  ];
+}
+
+// ── STORY VIEWER ──
 function StoryViewer({ data }) {
-  const years = [2024, 2023, 2022, 2021];
-  const [activeYear, setActiveYear] = useState(2024);
-  const [slideIndex, setSlideIndex] = useState(0);
-  const [progress, setProgress] = useState(0);
-  const timerRef = useRef(null);
-  const SLIDE_DURATION = 5000;
+  const YEARS=[2025,2024,2023,2022,2021];
+  const [activeYear,setActiveYear]=useState(2025);
+  const [slideIndex,setSlideIndex]=useState(0);
+  const [progress,setProgress]=useState(0);
+  const timerRef=useRef(null);
+  const DURATION=5000;
 
-  const slides = buildSlides(activeYear, data);
-  const total = slides.length;
+  const slides=activeYear===2025?build2025Slides(data):buildOtherSlides(activeYear,data);
+  const total=slides.length;
 
-  const goNext = () => setSlideIndex(i => Math.min(i+1, total-1));
-  const goPrev = () => setSlideIndex(i => Math.max(i-1, 0));
+  const goNext=()=>setSlideIndex(i=>Math.min(i+1,total-1));
+  const goPrev=()=>setSlideIndex(i=>Math.max(i-1,0));
 
-  useEffect(() => {
-    setProgress(0);
-    clearInterval(timerRef.current);
-    const start = Date.now();
-    timerRef.current = setInterval(() => {
-      const elapsed = Date.now() - start;
-      const pct = Math.min((elapsed / SLIDE_DURATION) * 100, 100);
+  useEffect(()=>{
+    setProgress(0);clearInterval(timerRef.current);
+    const start=Date.now();
+    timerRef.current=setInterval(()=>{
+      const pct=Math.min(((Date.now()-start)/DURATION)*100,100);
       setProgress(pct);
-      if (pct >= 100) {
-        clearInterval(timerRef.current);
-        setSlideIndex(i => {
-          if (i < total - 1) return i + 1;
-          return i;
-        });
-      }
-    }, 50);
-    return () => clearInterval(timerRef.current);
-  }, [slideIndex, activeYear]);
+      if(pct>=100){clearInterval(timerRef.current);setSlideIndex(i=>i<total-1?i+1:i);}
+    },50);
+    return()=>clearInterval(timerRef.current);
+  },[slideIndex,activeYear]);
 
-  const handleYearChange = (year) => {
-    setActiveYear(year);
-    setSlideIndex(0);
-    setProgress(0);
-  };
+  const handleYearChange=(year)=>{setActiveYear(year);setSlideIndex(0);setProgress(0);};
+
+  const progFill=activeYear===2025?'#000':'#fff';
 
   return (
     <div className="story-section">
       <div className="year-tabs">
-        {years.map(y => (
+        {YEARS.map(y=>(
           <button key={y} data-year={y} className={`year-tab ${activeYear===y?'active':''}`} onClick={()=>handleYearChange(y)}>
             {y} Wrapped
           </button>
         ))}
       </div>
-
-      <div className="story-viewer" onClick={e => {
-        const rect = e.currentTarget.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        if (x < rect.width / 2) goPrev(); else goNext();
-      }}>
-        {/* Progress bars */}
+      <div className="story-viewer" onClick={e=>{const r=e.currentTarget.getBoundingClientRect();e.clientX-r.left<r.width/2?goPrev():goNext();}}>
         <div className="story-progress">
-          {slides.map((_,i) => (
-            <div className="story-progress-bar" key={i}>
-              <div className="story-progress-fill" style={{
-                width: i < slideIndex ? '100%' : i === slideIndex ? `${progress}%` : '0%'
-              }}/>
+          {slides.map((_,i)=>(
+            <div className="story-progress-bar" key={i} style={{background:activeYear===2025?'rgba(0,0,0,0.15)':'rgba(255,255,255,0.25)'}}>
+              <div className="story-progress-fill" style={{background:progFill,width:i<slideIndex?'100%':i===slideIndex?`${progress}%`:'0%'}}/>
             </div>
           ))}
         </div>
-
-        {/* Slides */}
-        {slides.map((slide, i) => (
-          <div key={i} className={`story-slide ${slide.cls} ${i===slideIndex?'active':''}`}>
-            <div className="slide-logo">FOREVER WRAPPED</div>
-            {slide.content}
-            <div className="slide-swipe-hint">TAP TO ADVANCE</div>
+        {/* Render current slide */}
+        {slides[slideIndex] && (
+          <div key={slideIndex} style={{position:'absolute',inset:0,animation:'slideUp 0.3s ease both'}}>
+            {slides[slideIndex].render()}
           </div>
-        ))}
+        )}
+        <div style={{position:'absolute',inset:0,display:'flex',zIndex:20,pointerEvents:'none'}}>
+          <div style={{flex:1,pointerEvents:'auto'}} onClick={e=>{e.stopPropagation();goPrev();}}/>
+          <div style={{flex:1,pointerEvents:'auto'}} onClick={e=>{e.stopPropagation();goNext();}}/>
+        </div>
       </div>
-
-      <div style={{textAlign:'center',marginTop:12,fontSize:12,color:'var(--text-dim)'}}>
-        {slideIndex+1} / {total} — tap left/right sides to navigate
+      <div style={{textAlign:'center',marginTop:10,fontSize:12,color:'var(--text-dim)'}}>
+        {slideIndex+1} / {total} — tap left/right to navigate
       </div>
     </div>
   );
@@ -580,117 +741,85 @@ function StoryViewer({ data }) {
 function TimeSelector({value,onChange}){return(<div className="time-selector">{[['short_term','Last 4 Weeks'],['medium_term','Last 6 Months'],['long_term','All Time']].map(([v,l])=>(<button key={v} className={`time-btn ${value===v?'active':''}`} onClick={()=>onChange(v)}>{l}</button>))}</div>);}
 function TrackRow({track,index,showTime}){return(<div className="track-card" onClick={()=>window.open(track.external_urls?.spotify,'_blank')}><span className={`track-rank ${rankClass(index)}`}>#{index+1}</span><img className="track-art" src={track.album?.images?.[0]?.url||''} alt={track.name} onError={e=>{e.target.src='https://via.placeholder.com/52/222/555?text=♪';}}/><div className="track-info"><div className="track-name">{track.name}</div><div className="track-artist">{(track.artists||[]).map(a=>a.name).join(', ')}</div>{showTime&&track.played_at&&<div className="track-meta">{timeAgo(track.played_at)}</div>}</div>{!showTime&&<div className="track-bar-wrap"><div className="track-bar" style={{width:`${track.popularity||60}%`}}/></div>}{showTime&&<span className="badge">RECENT</span>}</div>);}
 function ArtistCard({artist,index}){return(<div className="artist-card" onClick={()=>window.open(artist.external_urls?.spotify,'_blank')}><span className="artist-rank-badge">#{index+1}</span><img className="artist-img" src={artist.images?.[0]?.url||''} alt={artist.name} onError={e=>{e.target.src='https://via.placeholder.com/80/222/555?text=♪';}}/><div className="artist-name">{artist.name}</div><div className="artist-sub">{(artist.genres||[])[0]||'Artist'}</div></div>);}
-function AlbumCard({album}){const year=(album.release_date||'').slice(0,4);return(<div className="album-card" onClick={()=>window.open(album.external_urls?.spotify,'_blank')}><img className="album-img" src={album.images?.[0]?.url||''} alt={album.name} onError={e=>{e.target.src='https://via.placeholder.com/200/222/555?text=♪';}}/><div className="album-name">{album.name}</div><div className="album-artist">{(album.artists||[]).map(a=>a.name).join(', ')}</div>{year&&<div className="album-year">{year}</div>}</div>);}
-function ShowMoreSection({title,items,renderItem,initialCount=5,step=5,containerClass}){const [visible,setVisible]=useState(initialCount);useEffect(()=>{setVisible(initialCount);},[items,initialCount]);const shown=items.slice(0,visible);const remaining=items.length-visible;return(<div className="section-wrap"><div className="section-title">{title}</div><div className={containerClass||'track-list'}>{shown.map((item,i)=>renderItem(item,i))}</div>{remaining>0&&<button className="btn-more" onClick={()=>setVisible(v=>Math.min(v+step,items.length))}>+ Show {Math.min(step,remaining)} more</button>}</div>);}
-function VibeBanner({tracks,genres}){const topDecade=getTopDecade(tracks);const breakdown=getDecadeBreakdown(tracks);const topGenres=genres.slice(0,6);return(<div className="vibe-banner"><div className="vibe-left"><div className="vibe-eyebrow">Your Music Era</div><div className="vibe-value">{topDecade||'Mixed'}</div><div className="vibe-desc">Based on your top track release years</div>{topGenres.length>0?(<><div className="vibe-eyebrow" style={{marginTop:16}}>Top Genres</div><div className="genre-tags">{topGenres.map(g=><span className="genre-tag" key={g}>{g}</span>)}</div></>):(<div className="vibe-desc" style={{marginTop:10,fontStyle:'italic',opacity:0.6}}>Genre data unavailable</div>)}</div>{breakdown.length>0&&(<div className="decade-bars">{breakdown.map(({decade,count,pct})=>(<div className="decade-row" key={decade}><span className="decade-label">{decade}</span><div className="decade-bar-wrap"><div className="decade-bar" style={{width:pct+'%'}}/></div><span className="decade-count">{count}</span></div>))}</div>)}</div>);}
+function AlbumCard({album}){const year=(album.release_date||'').slice(0,4);return(<div className="album-card" onClick={()=>window.open(album.external_urls?.spotify,'_blank')}><img className="album-img" src={album.images?.[0]?.url||''} alt={album.name} onError={e=>{e.target.src='https://via.placeholder.com/200/222/555?text=♪';}}/><div className="album-name">{album.name}</div><div className="album-artist">{(album.artists||[]).map(a=>a.name).join(', ')}</div>{year&&<div className="album-year-txt">{year}</div>}</div>);}
+function ShowMoreSection({title,items,renderItem,initialCount=5,step=5,containerClass}){const [visible,setVisible]=useState(initialCount);useEffect(()=>{setVisible(initialCount);},[items,initialCount]);const shown=items.slice(0,visible);const rem=items.length-visible;return(<div className="section-wrap"><div className="section-title">{title}</div><div className={containerClass||'track-list'}>{shown.map((item,i)=>renderItem(item,i))}</div>{rem>0&&<button className="btn-more" onClick={()=>setVisible(v=>Math.min(v+step,items.length))}>+ Show {Math.min(step,rem)} more</button>}</div>);}
+function VibeBanner({tracks,genres}){const topDecade=getTopDecade(tracks);const breakdown=getDecadeBreakdown(tracks);const topGenres=genres.slice(0,6);return(<div className="vibe-banner"><div className="vibe-left"><div className="vibe-eyebrow">Your Music Era</div><div className="vibe-value">{topDecade||'Mixed'}</div><div className="vibe-desc">Based on your top track release years</div>{topGenres.length>0?(<><div className="vibe-eyebrow" style={{marginTop:16}}>Top Genres</div><div className="genre-tags">{topGenres.map(g=><span className="genre-tag" key={g}>{g}</span>)}</div></>):null}</div>{breakdown.length>0&&(<div className="decade-bars">{breakdown.map(({decade,count,pct})=>(<div className="decade-row" key={decade}><span className="decade-label">{decade}</span><div className="decade-bar-wrap"><div className="decade-bar" style={{width:pct+'%'}}/></div><span className="decade-count">{count}</span></div>))}</div>)}</div>);}
 
-function MainApp({ token, onLogout }) {
-  const [timeRange, setTimeRange] = useState('medium_term');
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [showCopied, setShowCopied] = useState(false);
-
-  const load = useCallback(async () => {
-    setLoading(true); setError(null); setData(null);
-    try { setData(await fetchAllData(token, timeRange)); }
-    catch(e) { if(e.message==='TOKEN_EXPIRED') onLogout(); else setError(e.message); }
-    finally { setLoading(false); }
-  }, [token, timeRange]);
-
-  useEffect(() => { load(); }, [load]);
-  if (loading) return <LoadingScreen message="Fetching your music data…"/>;
-
-  const tracks=data?.tracks||[], artists=data?.artists||[], albums=data?.albums||[];
-  const recent=data?.recentTracks||[], genres=data?.genres||[], profile=data?.profile||{};
+function MainApp({token,onLogout}){
+  const [timeRange,setTimeRange]=useState('medium_term');
+  const [data,setData]=useState(null);
+  const [loading,setLoading]=useState(true);
+  const [error,setError]=useState(null);
+  const [showCopied,setShowCopied]=useState(false);
+  const load=useCallback(async()=>{setLoading(true);setError(null);setData(null);try{setData(await fetchAllData(token,timeRange));}catch(e){if(e.message==='TOKEN_EXPIRED')onLogout();else setError(e.message);}finally{setLoading(false);}}, [token,timeRange]);
+  useEffect(()=>{load();},[load]);
+  if(loading)return <LoadingScreen message="Fetching your music data…"/>;
+  const tracks=data?.tracks||[],artists=data?.artists||[],albums=data?.albums||[];
+  const recent=data?.recentTracks||[],genres=data?.genres||[],profile=data?.profile||{};
   const hasData=tracks.length>0||artists.length>0;
   const topDecade=getTopDecade(tracks);
-
   const handleShare=()=>{const text=`🎵 My Forever Wrapped:\n#1 Track: ${tracks[0]?.name||'?'}\n#1 Artist: ${artists[0]?.name||'?'}\nTop Genre: ${genres[0]||'N/A'}\nTop Era: ${topDecade||'Mixed'}\n\nforever-wrapped.onrender.com`;navigator.clipboard.writeText(text).then(()=>{setShowCopied(true);setTimeout(()=>setShowCopied(false),2600);});};
-  const tweetShare=()=>{const text=encodeURIComponent(`🎵 My #ForeverWrapped: Top Artist is ${artists[0]?.name||'?'} — ${genres[0]||'good music'} in the ${topDecade||'past'} 🎶`);window.open(`https://twitter.com/intent/tweet?text=${text}`,'_blank');};
+  const tweetShare=()=>{window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(`🎵 My #ForeverWrapped: Top Artist is ${artists[0]?.name||'?'} — ${genres[0]||'good music'} in the ${topDecade||'past'} 🎶`)}`,'_blank');};
 
-  return (
+  function LoadingScreen({message='Loading…'}){return <div className="loading-screen"><div className="loading-bars">{[1,2,3,4,5].map(i=><span key={i}/>)}</div><p className="loading-text">{message}</p></div>;}
+
+  return(
     <div>
-      {/* HEADER */}
       <div style={{maxWidth:1200,margin:'0 auto',padding:'24px 24px 0',display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:12}}>
         <div className="dash-brand"><div className="dash-brand-dot"/><div className="dash-brand-name">Forever<span>Wrapped</span></div></div>
         <div style={{display:'flex',alignItems:'center',gap:12,flexWrap:'wrap'}}>
-          {profile.display_name&&(<div className="user-pill"><img className="user-avatar" src={profile.images?.[0]?.url||''} alt={profile.display_name} onError={e=>{e.target.style.display='none';}}/><span className="user-name">{profile.display_name}</span></div>)}
+          {profile.display_name&&<div className="user-pill"><img className="user-avatar" src={profile.images?.[0]?.url||''} alt={profile.display_name} onError={e=>{e.target.style.display='none';}}/><span className="user-name">{profile.display_name}</span></div>}
           <button className="btn-logout" onClick={onLogout}>Sign out</button>
         </div>
       </div>
-
       {error&&<div style={{maxWidth:1200,margin:'16px auto',padding:'0 24px'}}><div className="error-card">⚠️ {error} <button onClick={load} style={{background:'none',border:'none',color:'inherit',cursor:'pointer',textDecoration:'underline',marginLeft:8}}>Retry</button></div></div>}
-
-      {!error && !hasData && (
-        <div className="empty-state"><div className="emoji">🎵</div><h2>Not enough listening history</h2><p>Try <strong>All Time</strong> or listen to more music!</p></div>
-      )}
-
-      {!error && hasData && (
-        <>
-          {/* STORY EXPERIENCE */}
-          <StoryViewer data={data}/>
-
-          {/* DIVIDER */}
-          <div className="scroll-divider">
-            <div className="scroll-divider-line"/>
-            <div className="scroll-divider-text">Your full stats below</div>
-            <div className="scroll-divider-line"/>
+      {!error&&!hasData&&<div className="empty-state"><div className="emoji">🎵</div><h2>Not enough listening history</h2><p>Try All Time or listen to more music!</p></div>}
+      {!error&&hasData&&<>
+        <StoryViewer data={data}/>
+        <div className="scroll-divider"><div className="scroll-divider-line"/><div className="scroll-divider-text">Your full stats below</div><div className="scroll-divider-line"/></div>
+        <div style={{textAlign:'center',padding:'8px 0 32px',fontSize:24,animation:'bounce 2s ease-in-out infinite'}}>↓</div>
+        <div className="dashboard" style={{paddingTop:0}}>
+          <TimeSelector value={timeRange} onChange={setTimeRange}/>
+          <div className="hero-section">
+            <div className="hero-card"><div className="hero-label">🎵 Top Track</div>{tracks[0]&&<><img className="hero-img" src={tracks[0].album?.images?.[0]?.url||''} alt={tracks[0].name} onError={e=>{e.target.src='https://via.placeholder.com/72/222/555?text=♪';}}/><div className="hero-value">{tracks[0].name}</div><div className="hero-meta">{(tracks[0].artists||[]).map(a=>a.name).join(', ')}</div></>}</div>
+            <div className="hero-card"><div className="hero-label">🎤 Top Artist</div>{artists[0]&&<><img className="hero-img circle" src={artists[0].images?.[0]?.url||''} alt={artists[0].name} onError={e=>{e.target.src='https://via.placeholder.com/72/222/555?text=♪';}}/><div className="hero-value">{artists[0].name}</div><div className="hero-meta">{genres[0]||'Artist'}</div></>}</div>
+            <div className="hero-card"><div className="hero-label">💿 Top Album</div>{albums[0]&&<><img className="hero-img" src={albums[0].images?.[0]?.url||''} alt={albums[0].name} onError={e=>{e.target.src='https://via.placeholder.com/72/222/555?text=♪';}}/><div className="hero-value">{albums[0].name}</div><div className="hero-meta">{(albums[0].artists||[]).map(a=>a.name).join(', ')}</div></>}</div>
           </div>
-          <div className="scroll-arrow">↓</div>
-
-          {/* FULL DASHBOARD */}
-          <div className="dashboard" style={{paddingTop:0}}>
-            <TimeSelector value={timeRange} onChange={setTimeRange}/>
-
-            <div className="hero-section">
-              <div className="hero-card">
-                <div className="hero-label">🎵 Top Track</div>
-                {tracks[0]&&<><img className="hero-img" src={tracks[0].album?.images?.[0]?.url||''} alt={tracks[0].name} onError={e=>{e.target.src='https://via.placeholder.com/72/222/555?text=♪';}}/><div className="hero-value">{tracks[0].name}</div><div className="hero-meta">{(tracks[0].artists||[]).map(a=>a.name).join(', ')}</div></>}
-              </div>
-              <div className="hero-card">
-                <div className="hero-label">🎤 Top Artist</div>
-                {artists[0]&&<><img className="hero-img circle" src={artists[0].images?.[0]?.url||''} alt={artists[0].name} onError={e=>{e.target.src='https://via.placeholder.com/72/222/555?text=♪';}}/><div className="hero-value">{artists[0].name}</div><div className="hero-meta">{genres[0]||'Artist'}</div></>}
-              </div>
-              <div className="hero-card">
-                <div className="hero-label">💿 Top Album</div>
-                {albums[0]&&<><img className="hero-img" src={albums[0].images?.[0]?.url||''} alt={albums[0].name} onError={e=>{e.target.src='https://via.placeholder.com/72/222/555?text=♪';}}/><div className="hero-value">{albums[0].name}</div><div className="hero-meta">{(albums[0].artists||[]).map(a=>a.name).join(', ')}</div></>}
-              </div>
-            </div>
-
-            <div className="stats-row">
-              <div className="stat-block"><span className="stat-icon">🎵</span><div className="stat-number">{tracks.length}</div><div className="stat-label">Top tracks</div></div>
-              <div className="stat-block"><span className="stat-icon">🎤</span><div className="stat-number">{artists.length}</div><div className="stat-label">Top artists</div></div>
-              <div className="stat-block"><span className="stat-icon">⏱</span><div className="stat-number">{fmtMinutes(data.estMinutes)}</div><div className="stat-label">Est. minutes</div></div>
-            </div>
-
-            <VibeBanner tracks={tracks} genres={genres}/>
-
-            <ShowMoreSection title="Top Tracks" items={tracks} initialCount={5} step={5} containerClass="track-list"
-              renderItem={(t,i)=><TrackRow key={t.id} track={t} index={i} showTime={false}/>}/>
-            <ShowMoreSection title="Top Artists" items={artists} initialCount={5} step={5} containerClass="artists-grid"
-              renderItem={(a,i)=><ArtistCard key={a.id} artist={a} index={i}/>}/>
-            <ShowMoreSection title="Top Albums" items={albums} initialCount={5} step={5} containerClass="albums-flex"
-              renderItem={(a,i)=><AlbumCard key={a.id} album={a} index={i}/>}/>
-            {recent.length>0&&(
-              <ShowMoreSection title="Recently Played" items={recent} initialCount={5} step={5} containerClass="track-list"
-                renderItem={(t,i)=><TrackRow key={t.id+'-'+i} track={t} index={i} showTime={true}/>}/>
-            )}
-
-            <div className="share-section">
-              <div className="share-text"><h3>Share your Wrapped</h3><p>Let the world know what you've been listening to</p></div>
-              <div className="share-buttons">
-                <button className="btn-share twitter" onClick={tweetShare}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.741l7.73-8.835L1.254 2.25H8.08l4.264 5.633 5.9-5.633zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                  Tweet
-                </button>
-                <button className="btn-share copy" onClick={handleShare}>📋 Copy Stats</button>
-              </div>
+          <div className="stats-row">
+            <div className="stat-block"><span className="stat-icon">🎵</span><div className="stat-number">{tracks.length}</div><div className="stat-label">Top tracks</div></div>
+            <div className="stat-block"><span className="stat-icon">🎤</span><div className="stat-number">{artists.length}</div><div className="stat-label">Top artists</div></div>
+            <div className="stat-block"><span className="stat-icon">⏱</span><div className="stat-number">{fmtNum(data.estMinutes)}</div><div className="stat-label">Est. minutes</div></div>
+          </div>
+          <VibeBanner tracks={tracks} genres={genres}/>
+          <ShowMoreSection title="Top Tracks" items={tracks} initialCount={5} step={5} containerClass="track-list" renderItem={(t,i)=><TrackRow key={t.id} track={t} index={i} showTime={false}/>}/>
+          <ShowMoreSection title="Top Artists" items={artists} initialCount={5} step={5} containerClass="artists-grid" renderItem={(a,i)=><ArtistCard key={a.id} artist={a} index={i}/>}/>
+          <ShowMoreSection title="Top Albums" items={albums} initialCount={5} step={5} containerClass="albums-flex" renderItem={(a,i)=><AlbumCard key={a.id} album={a} index={i}/>}/>
+          {recent.length>0&&<ShowMoreSection title="Recently Played" items={recent} initialCount={5} step={5} containerClass="track-list" renderItem={(t,i)=><TrackRow key={t.id+'-'+i} track={t} index={i} showTime={true}/>}/>}
+          <div className="share-section">
+            <div className="share-text"><h3>Share your Wrapped</h3><p>Let the world know what you've been listening to</p></div>
+            <div className="share-buttons">
+              <button className="btn-share twitter" onClick={tweetShare}><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.741l7.73-8.835L1.254 2.25H8.08l4.264 5.633 5.9-5.633zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>Tweet</button>
+              <button className="btn-share copy" onClick={handleShare}>📋 Copy Stats</button>
             </div>
           </div>
-        </>
-      )}
+        </div>
+      </>}
       {showCopied&&<div className="copied-toast">✓ Copied to clipboard!</div>}
+    </div>
+  );
+}
+
+function LoadingScreen({message='Loading…'}){return <div className="loading-screen"><div className="loading-bars">{[1,2,3,4,5].map(i=><span key={i}/>)}</div><p className="loading-text">{message}</p></div>;}
+
+function LoginScreen(){
+  const sp="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z";
+  return(
+    <div className="login-screen">
+      <div className="logo-mark"><svg viewBox="0 0 24 24"><path d={sp}/></svg></div>
+      <h1 className="login-title">Forever<br/><span>Wrapped</span></h1>
+      <p className="login-subtitle">Your Spotify Wrapped — every year's style, your current data.</p>
+      <button className="btn-login" onClick={initiateLogin}><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d={sp}/></svg>Connect with Spotify</button>
+      <div className="login-features">{['2025 Style','2024 Style','2023 Style','2022 Style','2021 Style'].map(f=>(<div className="feature-pill" key={f}><span className="dot"/>{f}</div>))}</div>
     </div>
   );
 }
@@ -704,19 +833,13 @@ function App(){
     const code=p.get('code'),err=p.get('error');
     setDebug(code?'Got callback...':err?'Error: '+err:'Ready');
     if(err){setError('Login cancelled: '+err);window.history.replaceState({},'','/');return;}
-    if(code){
-      window.history.replaceState({},'','/');setLoading(true);
-      exchangeToken(code)
-        .then(d=>{sessionStorage.setItem('spotify_token',d.access_token);setToken(d.access_token);})
-        .catch(e=>{setDebug('Error: '+e.message);setError(e.message);})
-        .finally(()=>setLoading(false));
-    }
+    if(code){window.history.replaceState({},'','/');setLoading(true);exchangeToken(code).then(d=>{sessionStorage.setItem('spotify_token',d.access_token);setToken(d.access_token);}).catch(e=>{setDebug('Error: '+e.message);setError(e.message);}).finally(()=>setLoading(false));}
   },[]);
   return(
     <div id="app">
       <div className="bg-orbs"><div className="orb orb1"/><div className="orb orb2"/><div className="orb orb3"/></div>
       {loading&&<LoadingScreen message="Connecting to Spotify…"/>}
-      {error&&!loading&&(<div className="login-screen"><div className="error-card" style={{maxWidth:440}}>⚠️ {error}</div><button className="btn-login" style={{marginTop:24}} onClick={()=>{setError(null);localStorage.clear();}}>Try Again</button></div>)}
+      {error&&!loading&&<div className="login-screen"><div className="error-card" style={{maxWidth:440}}>⚠️ {error}</div><button className="btn-login" style={{marginTop:24}} onClick={()=>{setError(null);localStorage.clear();}}>Try Again</button></div>}
       {!loading&&!error&&!token&&<LoginScreen/>}
       {!loading&&!error&&token&&<MainApp token={token} onLogout={()=>{sessionStorage.removeItem('spotify_token');setToken(null);}}/>}
       <div id="debug-bar" className="debug-bar">🎵 Ready</div>
